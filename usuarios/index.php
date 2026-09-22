@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 // Solo admin y trabajador pueden ver listados de usuarios.
 // El cliente NO tiene acceso a este listado (solo a su propio perfil).

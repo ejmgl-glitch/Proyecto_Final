@@ -17,5 +17,6 @@ $options = [
 try {
     $pdo = new PDO($dsn, $DB_USER, $DB_PASS, $options);
 } catch (PDOException $e) {
-    die('Error de conexión a la base de datos: ' . $e->getMessage());
+    http_response_code(500);
+    die('<h2>Error de conexión a la base de datos</h2><p>Verifica que MySQL esté iniciado y que exista la base de datos <strong>chilero</strong>.</p><p>Importa el archivo <code>sql/chilero.sql</code> desde phpMyAdmin.</p><p><small>Detalle técnico: ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '</small></p>');
 }

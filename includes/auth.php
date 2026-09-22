@@ -4,6 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+require_once __DIR__ . '/functions.php';
+
 
 function isLoggedIn(): bool {
     return isset($_SESSION['user']) && isset($_SESSION['user']['id']);
@@ -27,7 +29,6 @@ function hasRole(array $roles): bool {
 function requireLogin(): void {
     if (!isLoggedIn()) {
         redirect(url('/auth/login.php'));
-        exit;
     }
 }
 

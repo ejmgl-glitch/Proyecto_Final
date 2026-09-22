@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 requireLogin();
 
@@ -27,7 +27,7 @@ $validas = [1, 2, 3, 4, 5];
 $errors = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $calificacion = $_POST['calificacion'] ?? '';
+    $calificacion = (int)($_POST['calificacion'] ?? 0);
     $comentario   = trim($_POST['comentario'] ?? '');
 
     if (!in_array($calificacion, $validas, true)) $errors[] = 'Calificación inválida.';
@@ -59,7 +59,7 @@ require __DIR__ . '/../includes/header.php';
             <label>Calificación</label>
             <select name="calificacion">
                 <?php foreach ($validas as $v): ?>
-                    <option value="<?= str_repeat('⭐', (int)$v) ?>" <?= $review['calificacion']===$v?'selected':'' ?>><?= str_repeat('⭐', (int)$v) ?></option>
+                    <option value="<?= (int)$v ?>" <?= (int)$review['calificacion']===(int)$v?'selected':'' ?>><?= str_repeat('⭐', (int)$v) ?> (<?= (int)$v ?>)</option>
                 <?php endforeach; ?>
             </select>
         </div>

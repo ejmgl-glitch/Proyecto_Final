@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 $idProducto = (int)($_GET['id_producto'] ?? 0);
 
@@ -82,7 +82,7 @@ require __DIR__ . '/../includes/header.php';
                 <strong><?= h($r['usuario_nombre']) ?></strong>
                 <span class="muted"><?= h($r['fecha']) ?></span>
             </div>
-            <div class="stars"><?= str_repeat('⭐', (int)$r['calificacion']) ?></div>
+            <div class="stars"><?= str_repeat('⭐', (int)$r['calificacion']) ?> (<?= (int)$r['calificacion'] ?>/5)</div>
             <p><?= h($r['comentario']) ?></p>
             <?php if ($userId !== null && ((int)$r['id_usuario'] === (int)$userId || hasRole(['admin']))): ?>
                 <div class="actions">

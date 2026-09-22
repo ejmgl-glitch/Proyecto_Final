@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 if (isLoggedIn()) {
     redirect(url('/index.php'));
@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user || !password_verify($password, $user['password'])) {
             $errors[] = 'Correo o contraseña incorrectos.';
         } else {
+            session_regenerate_id(true);
             $_SESSION['user'] = [
                 'id'           => $user['id'],
                 'nombre'       => $user['nombre'],

@@ -220,7 +220,7 @@ VALUES
 (
     'Kevin',
     'admin@chilero.com',
-    '$2y$12$0k/zlBUkf5GWgIhm6dE/TeGA9Beovjc5eFz4M35VVBYdFA8Pwrbki',
+    '$2y$12$mcooO9IlXaIhJCqGT7qsSuAKG6uQt.A0Vbc0B6hRexEFeNYznDWty',
     '55512345',
     'Sede Central',
     'admin'
@@ -228,7 +228,7 @@ VALUES
 (
     'Martin',
     'empleado@chilero.com',
-    '$2y$12$0k/zlBUkf5GWgIhm6dE/TeGA9Beovjc5eFz4M35VVBYdFA8Pwrbki',
+    '$2y$12$mcooO9IlXaIhJCqGT7qsSuAKG6uQt.A0Vbc0B6hRexEFeNYznDWty',
     '55598765',
     'Antigua Guatemala',
     'trabajador'
@@ -236,7 +236,7 @@ VALUES
 (
     'Ana',
     'cliente@chilero.com',
-    '$2y$12$0k/zlBUkf5GWgIhm6dE/TeGA9Beovjc5eFz4M35VVBYdFA8Pwrbki',
+    '$2y$12$mcooO9IlXaIhJCqGT7qsSuAKG6uQt.A0Vbc0B6hRexEFeNYznDWty',
     '55567890',
     'Zona 7, Ciudad',
     'cliente'

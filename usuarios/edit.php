@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
 requireLogin();
 
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         setFlash('ok', 'Usuario actualizado correctamente.');
-        redirect($role === 'admin' && !$isSelf ? url('/usuarios/index.php') : url('/usuarios/edit.php?id=' . $targetId));
+        redirect(url($role === 'admin' && !$isSelf ? '/usuarios/index.php' : '/usuarios/edit.php?id=' . $targetId));
     }
 
     $usuario = array_merge($usuario, [

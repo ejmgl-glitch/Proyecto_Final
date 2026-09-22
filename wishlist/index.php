@@ -1,10 +1,8 @@
 <?php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
-require __DIR__ . '/../includes/functions.php';
+require_once __DIR__ . '/../includes/functions.php';
 
-// Cualquier usuario logueado tiene su propia wishlist (pensado sobre todo para clientes,
-// pero trabajador/admin también pueden usarla).
 requireLogin();
 $userId = (int)$_SESSION['user']['id'];
 
