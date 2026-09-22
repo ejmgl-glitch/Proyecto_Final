@@ -1,6 +1,5 @@
 const Footer = ({ 
-    projectName = "Paso Chilero", 
-    tagline = "Desarrollado por Kevin & Martín | © Todos los derechos reservados | Guatemala 2026",
+    tagline = "Paso Chilero | Desarrollado por Kevin & Martín | © Todos los derechos reservados | Guatemala 2026",
     links = [
         { label: "Inicio", url: "/chileroPasos/index.php" },
         { label: "Productos", url: "/chileroPasos/productos/index.php" },
@@ -15,7 +14,7 @@ const Footer = ({
             <div className="footer-content" style={{
                 maxWidth: "1200px",
                 margin: "0 auto",
-                padding: "25px 20px",
+                padding: "15px 20px",
                 display: "flex",
                 flexWrap: "wrap",
                 justifyContent: "space-between",
@@ -24,7 +23,7 @@ const Footer = ({
             }}>
                 {/* Sección de Marca e Información */}
                 <div className="footer-brand">
-                    <h3 style={{ margin: "0 0 5px 0" }}>{projectName}</h3>
+                    
                     <p style={{ margin: 0, opacity: 0.8, fontSize: "0.9rem" }}>
                         {tagline}
                     </p>
