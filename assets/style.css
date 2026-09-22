@@ -111,3 +111,34 @@ textarea { resize: vertical; min-height: 70px; }
 .stars { color: #e0a13a; letter-spacing: 2px; }
 .muted { color: var(--muted); font-size: 0.85rem; }
 .empty-state { text-align: center; padding: 40px 10px; color: var(--muted); }
+
+
+
+
+
+
+
+
+
+
+
+/* ==========================================
+   FOOTER FIJO / FLOTANTE EN PANTALLA
+   ========================================== */
+#react-footer-root {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Espacio inferior al body para que el footer no tape el contenido */
+body {
+    padding-bottom: 90px;
+}
+
+
+
+
+
