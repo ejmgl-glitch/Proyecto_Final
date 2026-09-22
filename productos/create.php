@@ -26,13 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     if (!$errors) {
+        $idCategoria = $old['id_categoria'] !== '' ? (int)$old['id_categoria'] : null;
+
         $stmt = $pdo->prepare(
-            'INSERT INTO producto (nombre, marca, descripcion, precio, color, genero, id_categoria)
-             VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO producto (nombre, marca, descripcion, precio, color, genero, imagen, id_categoria)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
         );
         $stmt->execute([
             $old['nombre'], $old['marca'], $old['descripcion'],
-            $old['precio'], $old['color'], $old['genero'], $old['id_categoria'], $old['imagen']
+            $old['precio'], $old['color'], $old['genero'], $old['imagen'], $idCategoria
         ]);
         setFlash('ok', 'Producto creado correctamente.');
         redirect(url('/productos/index.php'));

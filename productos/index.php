@@ -29,6 +29,9 @@ require __DIR__ . '/../includes/header.php';
 <div class="grid-products">
     <?php foreach ($productos as $p): ?>
         <div class="product-card">
+            <?php if (!empty($p['imagen'])): ?>
+                <img src="<?= h($p['imagen']) ?>" alt="<?= h($p['nombre']) ?>" class="product-thumb">
+            <?php endif; ?>
             <h3><?= h($p['nombre']) ?></h3>
             <p class="muted"><?= h($p['marca']) ?> · <?= h($p['categoria_nombre'] ?? 'Sin categoría') ?></p>
             <p><?= h($p['descripcion']) ?></p>

@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare(
             'UPDATE producto SET nombre=?, marca=?, descripcion=?, precio=?, color=?, genero=?, imagen=?, id_categoria=? WHERE id=?'
         );
-        $stmt->execute([$nombre, $marca, $descripcion, $precio, $color, $genero, $idCategoria, $id]);
+        $stmt->execute([$nombre, $marca, $descripcion, $precio, $color, $genero, $imagen, $idCategoria, $id]);
         setFlash('ok', 'Producto actualizado.');
         redirect(url('/productos/index.php'));
     }
@@ -78,8 +78,8 @@ require __DIR__ . '/../includes/header.php';
             <input type="text" name="color" value="<?= h($producto['color']) ?>">
         </div>
         <div>
-            <label>Color</label>
-            <input type="text" name="imagen" value="<?= h($producto['imagen']) ?>">
+            <label>Imagen (URL)</label>
+            <input type="text" name="imagen" value="<?= h($producto['imagen']) ?>" placeholder="https://... o /assets/img/producto.jpg">
         </div>
         <div>
             <label>Género</label>
