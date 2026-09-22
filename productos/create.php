@@ -6,7 +6,7 @@ require_once __DIR__ . '/../includes/functions.php';
 requireRole(['admin', 'trabajador']);
 
 $errors = [];
-$old = ['nombre'=>'','marca'=>'','descripcion'=>'','precio'=>'','color'=>'','genero'=>'hombre','id_categoria'=>'','categoria_nueva'=>''];
+$old = ['nombre'=>'','marca'=>'','descripcion'=>'','precio'=>'','color'=>'','genero'=>'hombre','id_categoria'=>'','imagen'=>''];
 
 $categorias = $pdo->query('SELECT id, nombre FROM categoria ORDER BY nombre')->fetchAll();
 
@@ -18,22 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $old['color']           = trim($_POST['color'] ?? '');
     $old['genero']          = $_POST['genero'] ?? 'hombre';
     $old['id_categoria']    = $_POST['id_categoria'] ?? '';
-    $old['categoria_nueva'] = trim($_POST['categoria_nueva'] ?? '');
+    $old['imagen'] = trim($_POST['imagen'] ?? '');
 
     if ($old['nombre'] === '') $errors[] = 'El nombre del producto es obligatorio.';
     if (!is_numeric($old['precio']) || (float)$old['precio'] < 0) $errors[] = 'El precio debe ser un número válido.';
     if (!in_array($old['genero'], ['hombre','mujer','ninos'], true)) $errors[] = 'Género inválido.';
 
-    $idCategoria = null;
-    if (!$errors) {
-        if ($old['categoria_nueva'] !== '') {
-            $stmt = $pdo->prepare('INSERT INTO categoria (nombre) VALUES (?)');
-            $stmt->execute([$old['categoria_nueva']]);
-            $idCategoria = (int)$pdo->lastInsertId();
-        } elseif ($old['id_categoria'] !== '') {
-            $idCategoria = (int)$old['id_categoria'];
-        }
-    }
 
     if (!$errors) {
         $stmt = $pdo->prepare(
@@ -42,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
         $stmt->execute([
             $old['nombre'], $old['marca'], $old['descripcion'],
-            $old['precio'], $old['color'], $old['genero'], $idCategoria,
+            $old['precio'], $old['color'], $old['genero'], $old['id_categoria'], $old['imagen']
         ]);
         setFlash('ok', 'Producto creado correctamente.');
         redirect(url('/productos/index.php'));
@@ -81,6 +71,10 @@ require __DIR__ . '/../includes/header.php';
             <input type="text" name="color" value="<?= h($old['color']) ?>">
         </div>
         <div>
+            <label>Imagen</label>
+            <input type="text" name="imagen" value="<?= h($old['imagen']) ?>">
+        </div>
+        <div>
             <label>Género</label>
             <select name="genero">
                 <option value="hombre" <?= $old['genero']==='hombre'?'selected':'' ?>>Hombre</option>
@@ -98,10 +92,6 @@ require __DIR__ . '/../includes/header.php';
                     </option>
                 <?php endforeach; ?>
             </select>
-        </div>
-        <div>
-            <label>...o crear una categoría nueva</label>
-            <input type="text" name="categoria_nueva" value="<?= h($old['categoria_nueva']) ?>" placeholder="Ej: Zapatillas">
         </div>
         <div class="actions">
             <button class="btn" type="submit">Crear</button>

@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $precio      = trim($_POST['precio'] ?? '');
     $color       = trim($_POST['color'] ?? '');
     $genero      = $_POST['genero'] ?? 'hombre';
+    $imagen = trim($_POST['imagen'] ?? '');
     $idCategoria = $_POST['id_categoria'] !== '' ? (int)$_POST['id_categoria'] : null;
 
     if ($nombre === '') $errors[] = 'El nombre del producto es obligatorio.';
@@ -33,14 +34,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$errors) {
         $stmt = $pdo->prepare(
-            'UPDATE producto SET nombre=?, marca=?, descripcion=?, precio=?, color=?, genero=?, id_categoria=? WHERE id=?'
+            'UPDATE producto SET nombre=?, marca=?, descripcion=?, precio=?, color=?, genero=?, imagen=?, id_categoria=? WHERE id=?'
         );
         $stmt->execute([$nombre, $marca, $descripcion, $precio, $color, $genero, $idCategoria, $id]);
         setFlash('ok', 'Producto actualizado.');
         redirect(url('/productos/index.php'));
     }
 
-    $producto = array_merge($producto, compact('nombre','marca','descripcion','precio','color','genero'));
+    $producto = array_merge($producto, compact('nombre','marca','descripcion','precio','color','genero', 'imagen'));
     $producto['id_categoria'] = $idCategoria;
 }
 
@@ -75,6 +76,10 @@ require __DIR__ . '/../includes/header.php';
         <div>
             <label>Color</label>
             <input type="text" name="color" value="<?= h($producto['color']) ?>">
+        </div>
+        <div>
+            <label>Color</label>
+            <input type="text" name="imagen" value="<?= h($producto['imagen']) ?>">
         </div>
         <div>
             <label>Género</label>
