@@ -35,7 +35,7 @@ require __DIR__ . '/../includes/header.php';
             <h3><?= h($p['nombre']) ?></h3>
             <p class="muted"><?= h($p['marca']) ?> · <?= h($p['categoria_nombre'] ?? 'Sin categoría') ?></p>
             <p><?= h($p['descripcion']) ?></p>
-            <p class="price">$<?= number_format((float)$p['precio'], 2) ?></p>
+            <p class="price">Q <?= number_format((float)$p['precio'], 2) ?></p>
             <p class="muted">Color: <?= h($p['color']) ?> · Género: <?= h($p['genero']) ?></p>
             <div class="actions" style="margin-top:10px;">
                 <a class="btn btn-sm btn-secondary" href="<?= url('/reviews/index.php?id_producto=' . (int)$p['id']) ?>">Reseñas</a>
