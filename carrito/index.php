@@ -9,7 +9,7 @@ require __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container" style="max-width: 1000px; margin: 30px auto; padding: 0 15px;">
-    <!-- Contenedor donde React montará el Carrito -->
+    <!-- Contenedor Carrito -->
     <div 
         id="react-carrito"
         data-user='<?= htmlspecialchars(json_encode($_SESSION['user'] ?? null), ENT_QUOTES, 'UTF-8') ?>'
@@ -17,7 +17,6 @@ require __DIR__ . '/../includes/header.php';
     ></div>
 </div>
 
-<!-- Componente React Carrito -->
 <script 
     type="text/babel" 
     src="<?= url('/assets/js/components/Carrito.jsx') ?>">

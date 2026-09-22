@@ -1,19 +1,30 @@
 <?php
-// productos/index.php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 $puedeEditar = hasRole(['admin', 'trabajador']);
+$buscar = trim($_GET['buscar'] ?? '');
 
-$stmt = $pdo->query(
-    'SELECT p.*, c.nombre AS categoria_nombre 
-     FROM producto p 
-     LEFT JOIN categoria c ON c.id = p.id_categoria 
-     ORDER BY p.id DESC'
-);
+if ($buscar !== '') {
+    $stmt = $pdo->prepare(
+        'SELECT p.*, c.nombre AS categoria_nombre 
+         FROM producto p 
+         LEFT JOIN categoria c ON c.id = p.id_categoria 
+         WHERE p.nombre LIKE ? OR p.marca LIKE ? OR p.descripcion LIKE ?
+         ORDER BY p.id DESC'
+    );
+    $param = '%' . $buscar . '%';
+    $stmt->execute([$param, $param, $param]);
+} else {
+    $stmt = $pdo->query(
+        'SELECT p.*, c.nombre AS categoria_nombre 
+         FROM producto p 
+         LEFT JOIN categoria c ON c.id = p.id_categoria 
+         ORDER BY p.id DESC'
+    );
+}
 $productos = $stmt->fetchAll();
-
 $pageTitle = 'Productos';
 require __DIR__ . '/../includes/header.php';
 ?>

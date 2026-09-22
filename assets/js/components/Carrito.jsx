@@ -9,7 +9,6 @@ const Carrito = ({ user, baseUrl = '/' }) => {
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-    // Cargar items desde localStorage al iniciar
     useEffect(() => {
         try {
             const guardado = localStorage.getItem('chilero_carrito');
@@ -50,7 +49,6 @@ const Carrito = ({ user, baseUrl = '/' }) => {
         }
     };
 
-    // Cálculos
     const total = items.reduce((acc, i) => acc + (parseFloat(i.precio) * i.cantidad), 0);
 
     // Enviar pedido al backend
@@ -94,7 +92,6 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                 throw new Error(data.error || 'Error al procesar la compra.');
             }
 
-            // Éxito: vaciar carrito y mostrar mensaje de confirmación
             actualizarStorage([]);
             setCompraExitosa({
                 pedidoId: data.pedido_id,
@@ -268,7 +265,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
     );
 };
 
-// Montaje en el DOM
+// DOM
 const carritoRoot = document.getElementById('react-carrito');
 if (carritoRoot) {
     const rawUserData = carritoRoot.getAttribute('data-user');

@@ -1,99 +1,149 @@
-// En assets/js/components/Header.jsx
 const { useState, useEffect } = React;
 
 const Header = ({ user, baseUrl = '/' }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [cartCount, setCartCount] = useState(0);
-
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
+    const [cartItems, setCartItems] = useState([]);
+    const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+    const [busqueda, setBusqueda] = useState('');
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
-    // Leer cantidad de productos en carrito y escuchar cambios
-    const actualizarContador = () => {
+    // Leer productos del carrito desde localStorage
+    const sincronizarCarrito = () => {
         try {
             const raw = localStorage.getItem('chilero_carrito');
-            if (raw) {
-                const items = JSON.parse(raw);
-                const totalCant = items.reduce((acc, item) => acc + (item.cantidad || 1), 0);
-                setCartCount(totalCant);
-            } else {
-                setCartCount(0);
-            }
+            setCartItems(raw ? JSON.parse(raw) : []);
         } catch (e) {
-            setCartCount(0);
+            setCartItems([]);
         }
     };
 
     useEffect(() => {
-        actualizarContador();
-        window.addEventListener('carrito_actualizado', actualizarContador);
-        window.addEventListener('storage', actualizarContador);
+        sincronizarCarrito();
+        window.addEventListener('carrito_actualizado', sincronizarCarrito);
+        window.addEventListener('storage', sincronizarCarrito);
         return () => {
-            window.removeEventListener('carrito_actualizado', actualizarContador);
-            window.removeEventListener('storage', actualizarContador);
+            window.removeEventListener('carrito_actualizado', sincronizarCarrito);
+            window.removeEventListener('storage', sincronizarCarrito);
         };
     }, []);
 
+    // Guardar cambios del carrito en localStorage
+    const actualizarStorage = (nuevosItems) => {
+        setCartItems(nuevosItems);
+        localStorage.setItem('chilero_carrito', JSON.stringify(nuevosItems));
+        window.dispatchEvent(new Event('carrito_actualizado'));
+    };
+
+    const cambiarCantidad = (id, delta) => {
+        const actualizados = cartItems.map(item => {
+            if (item.id === id) {
+                const nuevaCant = item.cantidad + delta;
+                return nuevaCant > 0 ? { ...item, cantidad: nuevaCant } : null;
+            }
+            return item;
+        }).filter(Boolean);
+        actualizarStorage(actualizados);
+    };
+
+    const eliminarItem = (id) => {
+        const actualizados = cartItems.filter(item => item.id !== id);
+        actualizarStorage(actualizados);
+    };
+
+    // Total de unidades y monto total
+    const totalCantidad = cartItems.reduce((acc, i) => acc + (i.cantidad || 1), 0);
+    const totalMonto = cartItems.reduce((acc, i) => acc + (parseFloat(i.precio) * (i.cantidad || 1)), 0);
+
+    // Manejar envío del formulario de búsqueda
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (busqueda.trim() !== '') {
+            window.location.href = `${cleanBase}productos/index.php?buscar=${encodeURIComponent(busqueda.trim())}`;
+        }
+    };
+
     return (
-        <header className="main-navbar">
-            <div className="navbar-container">
-                {/* 1. Izquierda: Logotipo */}
-                <div className="navbar-brand-wrapper">
-                    <a href={`${cleanBase}index.php`} className="navbar-brand">
-                        <span className="brand-highlight">Mi</span>Tienda
-                    </a>
-                </div>
+        <>
+            <header className="main-navbar">
+                <div className="navbar-container">
+                    {/* 1. Logotipo */}
+                    <div className="navbar-brand-wrapper">
+                        <a href={`${cleanBase}index.php`} className="navbar-brand">
+                            <span className="brand-highlight">Mi</span>Tienda
+                        </a>
+                    </div>
 
-                {/* Botón responsive para móviles */}
-                <button 
-                    className="navbar-toggler" 
-                    onClick={toggleMenu} 
-                    aria-label="Alternar navegación"
-                >
-                    <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
-                </button>
+                    {/* Botón responsive para móviles */}
+                    <button 
+                        className="navbar-toggler" 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                        aria-label="Alternar navegación"
+                    >
+                        <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
+                    </button>
 
-                {/* 2. Centro: Navegación */}
-                <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-                    <ul className="nav-list">
-                        <li className="nav-item">
-                            <a href={`${cleanBase}index.php`} className="nav-link">Inicio</a>
-                        </li>
-                        <li className="nav-item">
-                            <a href={`${cleanBase}productos/index.php`} className="nav-link">Productos</a>
-                        </li>
-                        <li className="nav-item">
-                            <a href={`${cleanBase}reviews/index.php`} className="nav-link">Reseñas</a>
-                        </li>
-                        
-                        {user && (
+                    {/* 2. Menú de Navegación central */}
+                    <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+                        <ul className="nav-list">
                             <li className="nav-item">
-                                <a href={`${cleanBase}wishlist/index.php`} className="nav-link">Favoritos</a>
+                                <a href={`${cleanBase}index.php`} className="nav-link">Inicio</a>
                             </li>
-                        )}
-
-                        {/* Enlace al Carrito */}
-                        <li className="nav-item">
-                            <a href={`${cleanBase}carrito/index.php`} className="nav-link nav-cart-link">
-                                🛒 Carrito 
-                                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-                            </a>
-                        </li>
-
-                        {user && (user.tipo_usuario === 'admin' || user.rol === 'admin' || user.role === 'admin') && (
                             <li className="nav-item">
-                                <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
-                                    Usuarios
-                                </a>
+                                <a href={`${cleanBase}productos/index.php`} className="nav-link">Productos</a>
                             </li>
-                        )}
-                    </ul>
+                            <li className="nav-item">
+                                <a href={`${cleanBase}reviews/index.php`} className="nav-link">Reseñas</a>
+                            </li>
+                            {user && (
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}wishlist/index.php`} className="nav-link">Favoritos</a>
+                                </li>
+                            )}
+                            {user && (user.tipo_usuario === 'admin' || user.rol === 'admin' || user.role === 'admin') && (
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
+                                        Usuarios
+                                    </a>
+                                </li>
+                            )}
+                        </ul>
+                    </nav>
 
-                    {/* Autenticación en menú móvil */}
-                    <div className="mobile-auth-wrapper">
+                    {/* 3. Área Derecha: Buscador -> Carrito -> Usuario / Login */}
+                    <div className="navbar-auth-wrapper">
+                        {/* Buscador de productos */}
+                        <form className="header-search-bar" onSubmit={handleSearchSubmit}>
+                            <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <input 
+                                type="text" 
+                                placeholder="Buscar productos..." 
+                                value={busqueda}
+                                onChange={(e) => setBusqueda(e.target.value)}
+                            />
+                        </form>
+
+                        {/* Botón Carrito con Contador */}
+                        <button 
+                            type="button"
+                            className="header-cart-button"
+                            onClick={() => setIsCartModalOpen(true)}
+                            title="Ver mi carrito"
+                        >
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                            {totalCantidad > 0 && (
+                                <span className="header-cart-badge">{totalCantidad}</span>
+                            )}
+                        </button>
+
+                        {/* Perfil del Usuario / Botones de Acceso */}
                         {user ? (
                             <div className="user-profile">
                                 <span className="user-greeting">
@@ -108,26 +158,85 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </div>
                         )}
                     </div>
-                </nav>
-
-                {/* 3. Derecha: Sesión y salida (Escritorio) */}
-                <div className="navbar-auth-wrapper">
-                    {user ? (
-                        <div className="user-profile">
-                            <span className="user-greeting">
-                                Hola, <strong>{user.nombre || user.username || 'Usuario'}</strong>
-                            </span>
-                            <a href={`${cleanBase}auth/logout.php`} className="btn-logout">Salir</a>
-                        </div>
-                    ) : (
-                        <div className="auth-buttons">
-                            <a href={`${cleanBase}auth/login.php`} className="btn-login">Ingresar</a>
-                            <a href={`${cleanBase}auth/register.php`} className="btn-register">Registro</a>
-                        </div>
-                    )}
                 </div>
-            </div>
-        </header>
+            </header>
+
+            {/* MODAL DEL CARRITO DE COMPRAS */}
+            {isCartModalOpen && (
+                <div className="cart-modal-backdrop" onClick={() => setIsCartModalOpen(false)}>
+                    <div className="cart-modal-content" onClick={(e) => e.stopPropagation()}>
+                        <div className="cart-modal-header">
+                            <h3>🛒 Mi Carrito ({totalCantidad})</h3>
+                            <button className="cart-modal-close" onClick={() => setIsCartModalOpen(false)}>✕</button>
+                        </div>
+
+                        <div className="cart-modal-body">
+                            {cartItems.length === 0 ? (
+                                <div className="cart-modal-empty">
+                                    <p>Tu carrito está vacío.</p>
+                                    <a 
+                                        href={`${cleanBase}productos/index.php`} 
+                                        className="btn btn-sm"
+                                        onClick={() => setIsCartModalOpen(false)}
+                                    >
+                                        Explorar productos
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className="cart-modal-list">
+                                    {cartItems.map((item) => (
+                                        <div key={item.id} className="cart-modal-item">
+                                            {item.imagen ? (
+                                                <img src={item.imagen} alt={item.nombre} className="cart-modal-thumb" />
+                                            ) : (
+                                                <div className="cart-modal-thumb-placeholder">👟</div>
+                                            )}
+                                            <div className="cart-modal-item-info">
+                                                <h4>{item.nombre}</h4>
+                                                <div className="muted">{item.marca}</div>
+                                                <div className="price">Q {parseFloat(item.precio).toFixed(2)}</div>
+                                            </div>
+                                            <div className="cart-modal-item-actions">
+                                                <div className="qty-control">
+                                                    <button onClick={() => cambiarCantidad(item.id, -1)} className="btn-qty">-</button>
+                                                    <span>{item.cantidad}</span>
+                                                    <button onClick={() => cambiarCantidad(item.id, 1)} className="btn-qty">+</button>
+                                                </div>
+                                                <button 
+                                                    className="btn-remove" 
+                                                    title="Quitar producto"
+                                                    onClick={() => eliminarItem(item.id)}
+                                                >
+                                                    🗑
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        {cartItems.length > 0 && (
+                            <div className="cart-modal-footer">
+                                <div className="cart-modal-total">
+                                    <span>Total:</span>
+                                    <span className="price" style={{ fontSize: '1.25rem' }}>Q {totalMonto.toFixed(2)}</span>
+                                </div>
+                                <div className="cart-modal-buttons">
+                                    <a 
+                                        href={`${cleanBase}carrito/index.php`} 
+                                        className="btn" 
+                                        style={{ width: '100%', textAlign: 'center', display: 'block' }}
+                                    >
+                                        Tramitar Compra
+                                    </a>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </>
     );
 };
 

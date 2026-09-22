@@ -329,9 +329,8 @@ textarea { resize: vertical; min-height: 70px; }
 
 
 
-/* ============================================================
-   ESTILOS DEL CARRITO (REACT)
-   ============================================================ */
+/* CARRITO (REACT) */
+
 .carrito-wrapper {
     margin-top: 10px;
 }
@@ -454,4 +453,239 @@ textarea { resize: vertical; min-height: 70px; }
     padding: 2px 7px;
     border-radius: 999px;
     line-height: 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* BUSCADOR, CARRITO Y MODAL (HEADER) */
+
+/* 1. Barra de Búsqueda estilo píldora */
+.header-search-bar {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 12px;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.header-search-bar:focus-within {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(179, 64, 31, 0.1);
+}
+
+.header-search-bar .search-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+}
+
+.header-search-bar input {
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #334155;
+    outline: none;
+    width: 170px;
+}
+
+.header-search-bar input::placeholder {
+    color: #94a3b8;
+}
+
+/* 2. Botón del Carrito en Header */
+.header-cart-button {
+    position: relative;
+    background: transparent;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 7px 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #475569;
+    transition: all 0.2s ease;
+}
+
+.header-cart-button:hover {
+    background: #f1f5f9;
+    color: var(--primary);
+    border-color: #cbd5e1;
+}
+
+.header-cart-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 999px;
+    line-height: 1;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+/* 3. Modal Flotante del Carrito */
+.cart-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeInModal 0.2s ease-out;
+}
+
+.cart-modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 480px;
+    border-radius: 12px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    max-height: 82vh;
+    overflow: hidden;
+    animation: slideUpModal 0.25s ease-out;
+}
+
+.cart-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-modal-header h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #1e293b;
+}
+
+.cart-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #64748b;
+    border-radius: 6px;
+    padding: 4px 8px;
+    transition: background 0.2s;
+}
+
+.cart-modal-close:hover {
+    background: #f1f5f9;
+    color: #0f172a;
+}
+
+.cart-modal-body {
+    padding: 16px 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.cart-modal-empty {
+    text-align: center;
+    padding: 30px 10px;
+    color: var(--muted);
+}
+
+.cart-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.cart-modal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.cart-modal-thumb {
+    width: 55px;
+    height: 55px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.cart-modal-thumb-placeholder {
+    width: 55px;
+    height: 55px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.cart-modal-item-info {
+    flex: 1;
+}
+
+.cart-modal-item-info h4 {
+    margin: 0 0 3px 0;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.cart-modal-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    background: #f8fafc;
+}
+
+.cart-modal-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUpModal {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
