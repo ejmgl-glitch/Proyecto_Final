@@ -1,13 +1,41 @@
-const { useState } = React;
+// En assets/js/components/Header.jsx
+const { useState, useEffect } = React;
 
 const Header = ({ user, baseUrl = '/' }) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [cartCount, setCartCount] = useState(0);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+
+    // Leer cantidad de productos en carrito y escuchar cambios
+    const actualizarContador = () => {
+        try {
+            const raw = localStorage.getItem('chilero_carrito');
+            if (raw) {
+                const items = JSON.parse(raw);
+                const totalCant = items.reduce((acc, item) => acc + (item.cantidad || 1), 0);
+                setCartCount(totalCant);
+            } else {
+                setCartCount(0);
+            }
+        } catch (e) {
+            setCartCount(0);
+        }
+    };
+
+    useEffect(() => {
+        actualizarContador();
+        window.addEventListener('carrito_actualizado', actualizarContador);
+        window.addEventListener('storage', actualizarContador);
+        return () => {
+            window.removeEventListener('carrito_actualizado', actualizarContador);
+            window.removeEventListener('storage', actualizarContador);
+        };
+    }, []);
 
     return (
         <header className="main-navbar">
@@ -47,7 +75,15 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </li>
                         )}
 
-                        {user && (user.rol === 'admin' || user.role === 'admin') && (
+                        {/* Enlace al Carrito */}
+                        <li className="nav-item">
+                            <a href={`${cleanBase}carrito/index.php`} className="nav-link nav-cart-link">
+                                🛒 Carrito 
+                                {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                            </a>
+                        </li>
+
+                        {user && (user.tipo_usuario === 'admin' || user.rol === 'admin' || user.role === 'admin') && (
                             <li className="nav-item">
                                 <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                     Usuarios
@@ -63,9 +99,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 <span className="user-greeting">
                                     Hola, <strong>{user.nombre || user.username || 'Usuario'}</strong>
                                 </span>
-                                <a href={`${cleanBase}auth/logout.php`} className="btn-logout">
-                                    Salir
-                                </a>
+                                <a href={`${cleanBase}auth/logout.php`} className="btn-logout">Salir</a>
                             </div>
                         ) : (
                             <div className="auth-buttons">
@@ -83,9 +117,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             <span className="user-greeting">
                                 Hola, <strong>{user.nombre || user.username || 'Usuario'}</strong>
                             </span>
-                            <a href={`${cleanBase}auth/logout.php`} className="btn-logout">
-                                Salir
-                            </a>
+                            <a href={`${cleanBase}auth/logout.php`} className="btn-logout">Salir</a>
                         </div>
                     ) : (
                         <div className="auth-buttons">
@@ -100,18 +132,15 @@ const Header = ({ user, baseUrl = '/' }) => {
 };
 
 const headerRootElement = document.getElementById('react-header');
-
 if (headerRootElement) {
     const rawUserData = headerRootElement.getAttribute('data-user');
     const baseUrlData = headerRootElement.getAttribute('data-baseurl') || '/';
-    
     let parsedUser = null;
     try {
         parsedUser = rawUserData ? JSON.parse(rawUserData) : null;
     } catch (e) {
         console.error("Error parseando datos de usuario en Header:", e);
     }
-
     const root = ReactDOM.createRoot(headerRootElement);
     root.render(<Header user={parsedUser} baseUrl={baseUrlData} />);
 }

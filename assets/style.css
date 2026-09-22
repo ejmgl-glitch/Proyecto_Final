@@ -318,3 +318,140 @@ textarea { resize: vertical; min-height: 70px; }
         border-top: 1px solid #f3f4f6;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================
+   ESTILOS DEL CARRITO (REACT)
+   ============================================================ */
+.carrito-wrapper {
+    margin-top: 10px;
+}
+
+.carrito-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .carrito-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.carrito-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.carrito-table th {
+    border-bottom: 2px solid var(--border);
+    padding: 10px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.carrito-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.qty-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.btn-qty {
+    background: #f3f4f6;
+    border: none;
+    width: 28px;
+    height: 28px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-qty:hover {
+    background: #e5e7eb;
+}
+
+.qty-control span {
+    padding: 0 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.btn-remove {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.btn-remove:hover {
+    background: #fee2e2;
+}
+
+.carrito-summary {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.95rem;
+}
+
+.summary-total {
+    border-bottom: none;
+    font-size: 1.15rem;
+    font-weight: bold;
+    padding-top: 15px;
+}
+
+/* Badge en el Header */
+.nav-cart-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.cart-badge {
+    background-color: var(--primary);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: bold;
+    padding: 2px 7px;
+    border-radius: 999px;
+    line-height: 1;
+}
