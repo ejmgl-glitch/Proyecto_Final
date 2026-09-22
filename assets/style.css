@@ -115,7 +115,7 @@ textarea { resize: vertical; min-height: 70px; }
 
 
 
-/* FOOTER */
+/* FOOTER (REACT) */
 #react-footer-root {
     position: fixed !important;
     bottom: 0;
@@ -128,5 +128,193 @@ textarea { resize: vertical; min-height: 70px; }
 
 
 
+/* HEADER (REACT)*/
+.main-navbar {
+    background-color: #ffffff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
 
+.navbar-container {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.9rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+}
 
+.navbar-brand-wrapper {
+    justify-self: start;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    color: #1e293b;
+    letter-spacing: -0.5px;
+}
+
+.brand-highlight {
+    color: #e67e22;
+}
+
+.nav-menu {
+    justify-self: center;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+    color: #e67e22;
+}
+
+.badge-admin {
+    background-color: #fcefe7;
+    color: #d35400 !important;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+/* 3. Derecha */
+.navbar-auth-wrapper {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.user-greeting {
+    font-size: 0.95rem;
+    color: #374151;
+}
+
+.auth-buttons {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.btn-login, .btn-register, .btn-logout {
+    text-decoration: none;
+    padding: 0.45rem 1.1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+.btn-login {
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-login:hover {
+    background-color: #f3f4f6;
+}
+
+.btn-register {
+    background-color: #e67e22;
+    color: #ffffff;
+}
+
+.btn-register:hover {
+    background-color: #d35400;
+}
+
+.btn-logout {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.btn-logout:hover {
+    background-color: #fecaca;
+}
+
+.navbar-toggler {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    color: #374151;
+}
+
+.mobile-auth-wrapper {
+    display: none;
+}
+
+@media (max-width: 850px) {
+    .navbar-container {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .navbar-toggler {
+        display: block;
+    }
+
+    .navbar-auth-wrapper {
+        display: none;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+        box-sizing: border-box;
+        border-top: 1px solid #f3f4f6;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 1.2rem;
+    }
+
+    .mobile-auth-wrapper {
+        display: block;
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid #f3f4f6;
+    }
+}
