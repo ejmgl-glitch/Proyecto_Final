@@ -71,7 +71,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                 <div className="navbar-container">
                     <div className="navbar-brand-wrapper">
                         <a href={`${cleanBase}index.php`} className="navbar-brand">
-                            <span className="brand-highlight">Mi</span>Tienda
+                            <span className="brand-highlight">Paso </span>Chilero
                         </a>
                     </div>
 
@@ -163,7 +163,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                         {user ? (
                             <div className="user-profile">
                                 <span className="user-greeting">
-                                    Hola, <strong>{user.nombre || user.username || 'Usuario'}</strong>
+                                    👤 <strong>{user.nombre || user.username || 'Usuario'}</strong>
                                 </span>
                                 <a href={`${cleanBase}auth/logout.php`} className="btn-logout">Salir</a>
                             </div>
