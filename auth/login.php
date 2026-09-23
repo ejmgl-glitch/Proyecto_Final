@@ -49,6 +49,13 @@ require __DIR__ . '/../includes/header.php';
             <p class="muted" style="margin: 0; font-size: 0.92rem;">Ingresa a tu cuenta para continuar en Paso Chilero</p>
         </div>
 
+        <?php if (isset($_SESSION['flash'])): ?>
+            <div class="flash flash-<?= h($_SESSION['flash']['type']) ?>" style="margin-bottom: 18px;">
+                <?= h($_SESSION['flash']['msg']) ?>
+            </div>
+            <?php unset($_SESSION['flash']); ?>
+        <?php endif; ?>
+
         <?php if (!empty($errors)): ?>
             <?php foreach ($errors as $e): ?>
                 <div class="flash flash-error" style="margin-bottom: 18px;"><?= h($e) ?></div>
@@ -87,11 +94,16 @@ require __DIR__ . '/../includes/header.php';
             </div>
         </form>
 
-        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); text-align: center;">
+        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border); text-align: center; display: flex; flex-direction: column; gap: 10px;">
             <p class="muted" style="margin: 0; font-size: 0.92rem;">
                 ¿Aún no tienes cuenta? 
                 <a href="<?= url('/auth/register.php') ?>" style="color: var(--primary); font-weight: 700; text-decoration: none;">
                     Crear cuenta
+                </a>
+            </p>
+            <p style="margin: 0; font-size: 0.92rem;">
+                <a href="<?= url('/auth/recuperar.php') ?>" style="color: var(--primary); font-weight: 700; text-decoration: none;">
+                    Recuperar contraseña
                 </a>
             </p>
         </div>
