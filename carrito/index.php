@@ -4,12 +4,16 @@ require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
+// Si es admin o trabajador, no tiene acceso al proceso de compra
+if (hasRole(['admin', 'trabajador'])) {
+    redirect(url('/pedidos/index.php'));
+}
+
 $page_title = 'Mi Carrito de Compras';
 require __DIR__ . '/../includes/header.php';
 ?>
 
 <div class="container" style="max-width: 1000px; margin: 30px auto; padding: 0 15px;">
-    <!-- Contenedor Carrito -->
     <div 
         id="react-carrito"
         data-user='<?= htmlspecialchars(json_encode($_SESSION['user'] ?? null), ENT_QUOTES, 'UTF-8') ?>'

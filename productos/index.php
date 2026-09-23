@@ -1,11 +1,14 @@
 <?php
+// productos/index.php
 require __DIR__ . '/../config/db.php';
 require __DIR__ . '/../includes/auth.php';
 require_once __DIR__ . '/../includes/functions.php';
 
 $puedeEditar = hasRole(['admin', 'trabajador']);
-$buscar = trim($_GET['buscar'] ?? '');
+// Solo los clientes (o visitantes sin sesión) ven el botón de agregar al carrito
+$puedeComprar = !isLoggedIn() || currentRole() === 'cliente';
 
+$buscar = trim($_GET['buscar'] ?? '');
 if ($buscar !== '') {
     $stmt = $pdo->prepare(
         'SELECT p.*, c.nombre AS categoria_nombre 
@@ -25,6 +28,7 @@ if ($buscar !== '') {
     );
 }
 $productos = $stmt->fetchAll();
+
 $pageTitle = 'Productos';
 require __DIR__ . '/../includes/header.php';
 ?>
@@ -49,28 +53,32 @@ require __DIR__ . '/../includes/header.php';
             <p class="muted"><?= h($p['marca']) ?> • <?= h($p['categoria_nombre'] ?? 'Sin categoría') ?></p>
             <p><?= h($p['descripcion']) ?></p>
             <p class="price">Q <?= number_format((float)$p['precio'], 2) ?></p>
-            <p class="muted">Color: <?= h($p['color']) ?> • Género: <?= h($p['genero']) ?></p>
+            <p class="muted">Color: <?= h($p['color']) ?> | Género: <?= h($p['genero']) ?></p>
             
             <div class="actions" style="margin-top:10px;">
-                <!-- Botón Agregar al Carrito -->
-                <button 
-                    type="button" 
-                    class="btn btn-sm" 
-                    onclick='agregarAlCarrito(<?= json_encode([
-                        "id"     => (int)$p["id"],
-                        "nombre" => $p["nombre"],
-                        "marca"  => $p["marca"],
-                        "precio" => (float)$p["precio"],
-                        "imagen" => $p["imagen"] ?? ""
-                    ]) ?>)'
-                >
-                    + Carrito
-                </button>
+                <?php if ($puedeComprar): ?>
+                    <!-- Botón Agregar al Carrito (Solo Clientes / Visitantes) -->
+                    <button 
+                        type="button" 
+                        class="btn btn-sm"
+                        onclick='agregarAlCarrito(<?= json_encode([
+                            "id"     => (int)$p["id"],
+                            "nombre" => $p["nombre"],
+                            "marca"  => $p["marca"],
+                            "precio" => (float)$p["precio"],
+                            "imagen" => $p["imagen"] ?? ""
+                        ]) ?>)'
+                    >
+                        + Carrito
+                    </button>
+                <?php endif; ?>
 
                 <a class="btn btn-sm btn-secondary" href="<?= url('/reviews/index.php?id_producto=' . (int)$p['id']) ?>">Reseñas</a>
-                <?php if (isLoggedIn()): ?>
+                
+                <?php if ($puedeComprar && isLoggedIn()): ?>
                     <a class="btn btn-sm" href="<?= url('/wishlist/toggle.php?id_producto=' . (int)$p['id']) ?>">♥ Wishlist</a>
                 <?php endif; ?>
+
                 <?php if ($puedeEditar): ?>
                     <a class="btn btn-sm" href="<?= url('/productos/edit.php?id=' . (int)$p['id']) ?>">Editar</a>
                     <form class="form-inline" method="post" action="<?= url('/productos/delete.php') ?>" onsubmit="return confirm('¿Eliminar este producto?');">
@@ -84,6 +92,7 @@ require __DIR__ . '/../includes/header.php';
 </div>
 <?php endif; ?>
 
+<?php if ($puedeComprar): ?>
 <script>
 function agregarAlCarrito(producto) {
     let carrito = [];
@@ -92,7 +101,6 @@ function agregarAlCarrito(producto) {
     } catch(e) {
         carrito = [];
     }
-
     const index = carrito.findIndex(item => item.id === producto.id);
     if (index !== -1) {
         carrito[index].cantidad += 1;
@@ -106,11 +114,11 @@ function agregarAlCarrito(producto) {
             cantidad: 1
         });
     }
-
     localStorage.setItem('chilero_carrito', JSON.stringify(carrito));
     window.dispatchEvent(new Event('carrito_actualizado'));
     alert('¡"' + producto.nombre + '" agregado al carrito!');
 }
 </script>
+<?php endif; ?>
 
 <?php require __DIR__ . '/../includes/footer.php'; ?>

@@ -7,8 +7,11 @@ const Header = ({ user, baseUrl = '/' }) => {
     const [busqueda, setBusqueda] = useState('');
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+    
+    // Validar si es cliente o visitante (no admin ni trabajador)
+    const userRole = user ? (user.tipo_usuario || user.rol || user.role) : null;
+    const puedeUsarCarrito = !userRole || userRole === 'cliente';
 
-    // Leer productos del carrito desde localStorage
     const sincronizarCarrito = () => {
         try {
             const raw = localStorage.getItem('chilero_carrito');
@@ -19,16 +22,17 @@ const Header = ({ user, baseUrl = '/' }) => {
     };
 
     useEffect(() => {
-        sincronizarCarrito();
-        window.addEventListener('carrito_actualizado', sincronizarCarrito);
-        window.addEventListener('storage', sincronizarCarrito);
-        return () => {
-            window.removeEventListener('carrito_actualizado', sincronizarCarrito);
-            window.removeEventListener('storage', sincronizarCarrito);
-        };
-    }, []);
+        if (puedeUsarCarrito) {
+            sincronizarCarrito();
+            window.addEventListener('carrito_actualizado', sincronizarCarrito);
+            window.addEventListener('storage', sincronizarCarrito);
+            return () => {
+                window.removeEventListener('carrito_actualizado', sincronizarCarrito);
+                window.removeEventListener('storage', sincronizarCarrito);
+            };
+        }
+    }, [puedeUsarCarrito]);
 
-    // Guardar cambios del carrito en localStorage
     const actualizarStorage = (nuevosItems) => {
         setCartItems(nuevosItems);
         localStorage.setItem('chilero_carrito', JSON.stringify(nuevosItems));
@@ -51,11 +55,9 @@ const Header = ({ user, baseUrl = '/' }) => {
         actualizarStorage(actualizados);
     };
 
-    // Total de unidades y monto total
     const totalCantidad = cartItems.reduce((acc, i) => acc + (i.cantidad || 1), 0);
     const totalMonto = cartItems.reduce((acc, i) => acc + (parseFloat(i.precio) * (i.cantidad || 1)), 0);
 
-    // Manejar envío del formulario de búsqueda
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (busqueda.trim() !== '') {
@@ -67,23 +69,20 @@ const Header = ({ user, baseUrl = '/' }) => {
         <>
             <header className="main-navbar">
                 <div className="navbar-container">
-                    {/* 1. Logotipo */}
                     <div className="navbar-brand-wrapper">
                         <a href={`${cleanBase}index.php`} className="navbar-brand">
                             <span className="brand-highlight">Mi</span>Tienda
                         </a>
                     </div>
 
-                    {/* Botón responsive para móviles */}
                     <button 
                         className="navbar-toggler" 
-                        onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
                         aria-label="Alternar navegación"
                     >
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
-                    {/* 2. Menú de Navegación central */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
                         <ul className="nav-list">
                             <li className="nav-item">
@@ -95,12 +94,12 @@ const Header = ({ user, baseUrl = '/' }) => {
                             <li className="nav-item">
                                 <a href={`${cleanBase}reviews/index.php`} className="nav-link">Reseñas</a>
                             </li>
-                            {user && (
+                            {user && puedeUsarCarrito && (
                                 <li className="nav-item">
                                     <a href={`${cleanBase}wishlist/index.php`} className="nav-link">Favoritos</a>
                                 </li>
                             )}
-                            {user && (user.tipo_usuario === 'admin' || user.rol === 'admin' || user.role === 'admin') && (
+                            {user && (userRole === 'admin' || userRole === 'trabajador') && (
                                 <li className="nav-item">
                                     <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                         Usuarios
@@ -110,9 +109,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                         </ul>
                     </nav>
 
-                    {/* 3. Área Derecha: Buscador -> Carrito -> Pedidos -> Usuario / Login */}
                     <div className="navbar-auth-wrapper">
-                        {/* Buscador de productos */}
                         <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                             <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -120,46 +117,49 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </svg>
                             <input 
                                 type="text" 
-                                placeholder="Buscar productos..." 
+                                placeholder="Buscar productos..."
                                 value={busqueda}
                                 onChange={(e) => setBusqueda(e.target.value)}
                             />
                         </form>
 
-                        {/* Botón Carrito con Contador */}
-                        <button 
-                            type="button"
-                            className="header-cart-button"
-                            onClick={() => setIsCartModalOpen(true)}
-                            title="Ver mi carrito"
-                        >
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="9" cy="21" r="1"></circle>
-                                <circle cx="20" cy="21" r="1"></circle>
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                            </svg>
-                            {totalCantidad > 0 && (
-                                <span className="header-cart-badge">{totalCantidad}</span>
-                            )}
-                        </button>
+                        {/* Mostrar carrito SOLO a clientes o usuarios sin login */}
+                        {puedeUsarCarrito && (
+                            <button 
+                                type="button"
+                                className="header-cart-button"
+                                onClick={() => setIsCartModalOpen(true)}
+                                title="Ver mi carrito"
+                            >
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="9" cy="21" r="1"></circle>
+                                    <circle cx="20" cy="21" r="1"></circle>
+                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                </svg>
+                                {totalCantidad > 0 && (
+                                    <span className="header-cart-badge">{totalCantidad}</span>
+                                )}
+                            </button>
+                        )}
 
-                        {/* Botón Verde de Historial de Pedidos */}
-                        <a 
-                            href={`${cleanBase}pedidos/index.php`} 
-                            className="header-orders-button"
-                            title="Historial de mis pedidos"
-                        >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            <span>Pedidos</span>
-                        </a>
+                        {/* Botón de pedidos */}
+                        {user && (
+                            <a 
+                                href={`${cleanBase}pedidos/index.php`} 
+                                className="header-orders-button"
+                                title={puedeUsarCarrito ? "Mis pedidos" : "Gestión de Pedidos"}
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                                <span>{puedeUsarCarrito ? 'Pedidos' : 'Gestión Pedidos'}</span>
+                            </a>
+                        )}
 
-                        {/* Perfil del Usuario / Botones de Acceso */}
                         {user ? (
                             <div className="user-profile">
                                 <span className="user-greeting">
@@ -177,8 +177,8 @@ const Header = ({ user, baseUrl = '/' }) => {
                 </div>
             </header>
 
-            {/* MODAL DEL CARRITO DE COMPRAS */}
-            {isCartModalOpen && (
+            {/* Modal de Carrito */}
+            {puedeUsarCarrito && isCartModalOpen && (
                 <div className="cart-modal-backdrop" onClick={() => setIsCartModalOpen(false)}>
                     <div className="cart-modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="cart-modal-header">
@@ -223,7 +223,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                                     title="Quitar producto"
                                                     onClick={() => eliminarItem(item.id)}
                                                 >
-                                                    🗑
+                                                    ✕
                                                 </button>
                                             </div>
                                         </div>
