@@ -19,7 +19,7 @@ const Header = ({ user, baseUrl = '/' }) => {
 
     // Detección de ruta activa y páginas de autenticación
     const path = (typeof window !== 'undefined' ? window.location.pathname : '').toLowerCase();
-    const isAuth = path.includes('/auth') || path.includes('login.php') || path.includes('register.php');
+    const isAuth = path.includes('/auth') || path.includes('login.php') || path.includes('register.php') || path.includes('recuperar.php');
     const isProductos = path.includes('/productos');
     const isReviews = path.includes('/reviews');
     const isFavoritos = path.includes('/wishlist');
@@ -111,21 +111,22 @@ const Header = ({ user, baseUrl = '/' }) => {
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
-                    {/* MENÚ CENTRAL */}
+                    {/* MENÚ CENTRAL (En pantallas de Auth no se muestra nada en el centro) */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
                         {isAuth ? (
-                            /* En páginas Login y Registro: solo botón Regresar a Página Principal con color --muted */
-                            <ul className="nav-list nav-list-buttons">
-                                <li className="nav-item">
-                                    <a 
-                                        href={`${cleanBase}index.php`} 
-                                        className="header-nav-btn btn-muted"
-                                        style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
-                                    >
-                                        &larr; Regresar a la Página Principal
-                                    </a>
-                                </li>
-                            </ul>
+                            isMenuOpen && (
+                                <ul className="nav-list nav-list-buttons">
+                                    <li className="nav-item">
+                                        <a 
+                                            href={`${cleanBase}index.php`} 
+                                            className="header-nav-btn btn-muted"
+                                            style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
+                                        >
+                                            &larr; Regresar a la Página Principal
+                                        </a>
+                                    </li>
+                                </ul>
+                            )
                         ) : esAdmin ? (
                             /* Administrador */
                             <ul className="nav-list nav-list-buttons">
@@ -211,7 +212,7 @@ const Header = ({ user, baseUrl = '/' }) => {
 
                     {/* BLOQUE DERECHO */}
                     <div className="navbar-auth-wrapper">
-                        {/* Buscador (se oculta en Login/Register) */}
+                        {/* Buscador (oculto en pantallas de Auth) */}
                         {!isAuth && (
                             <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                                 <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -227,14 +228,14 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </form>
                         )}
 
-                        {/* Botón de Usuarios para Staff (se oculta en Login/Register) */}
+                        {/* Botón de Usuarios para Staff (oculto en Auth) */}
                         {!isAuth && user && (esAdmin || esTrabajador) && (
                             <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                 Usuarios
                             </a>
                         )}
 
-                        {/* Carrito (se oculta en Login/Register) */}
+                        {/* Carrito (oculto en Auth) */}
                         {!isAuth && puedeUsarCarrito && (
                             <button 
                                 type="button"
@@ -253,7 +254,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </button>
                         )}
 
-                        {/* Pedidos (se oculta en Login/Register) */}
+                        {/* Pedidos (oculto en Auth) */}
                         {!isAuth && user && (
                             <a 
                                 href={`${cleanBase}pedidos/index.php`} 
@@ -280,6 +281,29 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </div>
                         ) : (
                             <div className="auth-buttons">
+                                {/* Botón "Regresar a la Página Principal" situado a la par de Ingresar */}
+                                {isAuth && (
+                                    <a 
+                                        href={`${cleanBase}index.php`} 
+                                        style={{
+                                            backgroundColor: 'var(--muted)',
+                                            color: '#ffffff',
+                                            textDecoration: 'none',
+                                            padding: '0.4rem 0.95rem',
+                                            borderRadius: '6px',
+                                            fontSize: '0.88rem',
+                                            fontWeight: '600',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            whiteSpace: 'nowrap',
+                                            transition: 'opacity 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+                                        onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+                                    >
+                                        &larr; Regresar a la Página Principal
+                                    </a>
+                                )}
                                 <a href={`${cleanBase}auth/login.php`} className="btn-login">Ingresar</a>
                                 <a href={`${cleanBase}auth/register.php`} className="btn-register">Registro</a>
                             </div>
