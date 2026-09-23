@@ -36,7 +36,6 @@ try {
     $reseniasDestacadas = [];
 }
 
-// Reseñas de respaldo mientras la tienda acumula reseñas reales
 $reseniasRespaldo = [
     ['nombre' => 'Carlos M.', 'lugar' => 'Guatemala', 'calificacion' => 5, 
      'comentario' => 'Me gustó mucho la variedad de estilos y la atención. Encontré justamente el tipo de zapato que estaba buscando.'],
@@ -74,15 +73,15 @@ require __DIR__ . '/includes/header.php';
     <section class="features-bar">
         <div class="features-grid">
             <div class="feature-item">
-                <strong><span class="dot">● </span>100% Guatemala</strong>
+                <strong><span class="dot">•</span>100% Guatemala</strong>
                 <span>Tienda y distribución nacional</span>
             </div>
             <div class="feature-item">
-                <strong><span class="dot">● </span>Calidad seleccionada</strong>
+                <strong><span class="dot">•</span>Calidad seleccionada</strong>
                 <span>Productos elegidos para nuestros clientes</span>
             </div>
             <div class="feature-item">
-                <strong><span class="dot">● </span>Atención cercana</strong>
+                <strong><span class="dot">•</span>Atención cercana</strong>
                 <span>Servicio pensado para cada cliente</span>
             </div>
         </div>
@@ -276,10 +275,16 @@ require __DIR__ . '/includes/header.php';
 </div>
 
 <script>
+function getCartKey() {
+    const user = <?= json_encode($_SESSION['user'] ?? null) ?>;
+    return user && user.id ? ('chilero_carrito_' + user.id) : 'chilero_carrito_guest';
+}
+
 function agregarAlCarrito(producto) {
+    const cartKey = getCartKey();
     let carrito = [];
     try {
-        carrito = JSON.parse(localStorage.getItem('chilero_carrito')) || [];
+        carrito = JSON.parse(localStorage.getItem(cartKey)) || [];
     } catch (e) {
         carrito = [];
     }
@@ -287,11 +292,18 @@ function agregarAlCarrito(producto) {
     if (index !== -1) {
         carrito[index].cantidad += 1;
     } else {
-        carrito.push({ id: producto.id, nombre: producto.nombre, marca: producto.marca, precio: producto.precio, imagen: producto.imagen, cantidad: 1 });
+        carrito.push({ 
+            id: producto.id, 
+            nombre: producto.nombre, 
+            marca: producto.marca, 
+            precio: producto.precio, 
+            imagen: producto.imagen, 
+            cantidad: 1 
+        });
     }
-    localStorage.setItem('chilero_carrito', JSON.stringify(carrito));
+    localStorage.setItem(cartKey, JSON.stringify(carrito));
     window.dispatchEvent(new Event('carrito_actualizado'));
-    alert('✓ "' + producto.nombre + '" agregado al carrito!');
+    alert('🛒 "' + producto.nombre + '" agregado al carrito!');
 }
 </script>
 

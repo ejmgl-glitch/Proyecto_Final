@@ -9,6 +9,7 @@ $puedeEditar = hasRole(['admin', 'trabajador']);
 $puedeComprar = !isLoggedIn() || currentRole() === 'cliente';
 
 $buscar = trim($_GET['buscar'] ?? '');
+
 if ($buscar !== '') {
     $stmt = $pdo->prepare(
         'SELECT p.*, c.nombre AS categoria_nombre 
@@ -94,10 +95,16 @@ require __DIR__ . '/../includes/header.php';
 
 <?php if ($puedeComprar): ?>
 <script>
+function getCartKey() {
+    const user = <?= json_encode($_SESSION['user'] ?? null) ?>;
+    return user && user.id ? ('chilero_carrito_' + user.id) : 'chilero_carrito_guest';
+}
+
 function agregarAlCarrito(producto) {
+    const cartKey = getCartKey();
     let carrito = [];
     try {
-        carrito = JSON.parse(localStorage.getItem('chilero_carrito')) || [];
+        carrito = JSON.parse(localStorage.getItem(cartKey)) || [];
     } catch(e) {
         carrito = [];
     }
@@ -114,9 +121,9 @@ function agregarAlCarrito(producto) {
             cantidad: 1
         });
     }
-    localStorage.setItem('chilero_carrito', JSON.stringify(carrito));
+    localStorage.setItem(cartKey, JSON.stringify(carrito));
     window.dispatchEvent(new Event('carrito_actualizado'));
-    alert('¡"' + producto.nombre + '" agregado al carrito!');
+    alert('🛒 "' + producto.nombre + '" agregado al carrito!');
 }
 </script>
 <?php endif; ?>

@@ -8,22 +8,25 @@ const Carrito = ({ user, baseUrl = '/' }) => {
     const [compraExitosa, setCompraExitosa] = useState(null);
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+    const cartKey = user && user.id ? `chilero_carrito_${user.id}` : 'chilero_carrito_guest';
 
     useEffect(() => {
         try {
-            const guardado = localStorage.getItem('chilero_carrito');
+            const guardado = localStorage.getItem(cartKey);
             if (guardado) {
                 setItems(JSON.parse(guardado));
+            } else {
+                setItems([]);
             }
         } catch (e) {
             console.error("Error al cargar carrito:", e);
         }
-    }, []);
+    }, [user]);
 
     // Guardar cambios en localStorage
     const actualizarStorage = (nuevosItems) => {
         setItems(nuevosItems);
-        localStorage.setItem('chilero_carrito', JSON.stringify(nuevosItems));
+        localStorage.setItem(cartKey, JSON.stringify(nuevosItems));
         window.dispatchEvent(new Event('carrito_actualizado'));
     };
 
@@ -76,6 +79,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
         }
 
         setCargando(true);
+
         try {
             const resp = await fetch(`${cleanBase}carrito/procesar_pedido.php`, {
                 method: 'POST',
@@ -97,6 +101,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                 pedidoId: data.pedido_id,
                 total: data.total
             });
+
         } catch (err) {
             setMensaje({ tipo: 'error', texto: err.message });
         } finally {
@@ -108,7 +113,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
     if (compraExitosa) {
         return (
             <div className="card text-center" style={{ padding: '40px 20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '3rem', color: 'var(--ok, #1f7a3d)' }}>✓</div>
+                <div style={{ fontSize: '3rem', color: 'var(--ok, #1f7a3d)' }}>🎉</div>
                 <h1 style={{ color: 'var(--ok, #1f7a3d)', marginTop: '10px' }}>¡Gracias por tu compra!</h1>
                 <p>Tu orden ha sido registrada con el número de pedido <strong>#{compraExitosa.pedidoId}</strong>.</p>
                 <p className="price" style={{ fontSize: '1.4rem' }}>Total pagado: Q {compraExitosa.total}</p>
@@ -182,10 +187,10 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                         <td>
                                             <button 
                                                 onClick={() => eliminarItem(item.id)} 
-                                                className="btn-remove" 
+                                                className="btn-remove"
                                                 title="Eliminar producto"
                                             >
-                                                ✕
+                                                🗑️
                                             </button>
                                         </td>
                                     </tr>
@@ -213,7 +218,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                             <span className="price">Q {total.toFixed(2)}</span>
                         </div>
 
-                        {/* Selección de método de pago (según el ENUM de BD) */}
+                        {/* Selección de método de pago */}
                         <div style={{ marginTop: '20px' }}>
                             <label><strong>Método de Pago:</strong></label>
                             <select 

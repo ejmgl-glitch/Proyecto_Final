@@ -14,6 +14,9 @@ const Header = ({ user, baseUrl = '/' }) => {
     const esTrabajador = userRole === 'trabajador' || userRole === 'empleado';
     const puedeUsarCarrito = !userRole || userRole === 'cliente';
 
+    // Clave de carrito única por usuario
+    const cartKey = user && user.id ? `chilero_carrito_${user.id}` : 'chilero_carrito_guest';
+
     // Detección infalible de ruta activa
     const path = (typeof window !== 'undefined' ? window.location.pathname : '').toLowerCase();
     const isProductos = path.includes('/productos');
@@ -25,7 +28,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                      !path.includes('/usuarios') && 
                      !path.includes('/auth');
 
-    // Estilo activo garantizado (con color --primary y línea abajo)
+    // Estilo activo garantizado
     const activeStyle = {
         color: 'var(--primary)',
         fontWeight: '700',
@@ -38,7 +41,7 @@ const Header = ({ user, baseUrl = '/' }) => {
 
     const sincronizarCarrito = () => {
         try {
-            const raw = localStorage.getItem('chilero_carrito');
+            const raw = localStorage.getItem(cartKey);
             setCartItems(raw ? JSON.parse(raw) : []);
         } catch (e) {
             setCartItems([]);
@@ -55,11 +58,11 @@ const Header = ({ user, baseUrl = '/' }) => {
                 window.removeEventListener('storage', sincronizarCarrito);
             };
         }
-    }, [puedeUsarCarrito]);
+    }, [puedeUsarCarrito, user]);
 
     const actualizarStorage = (nuevosItems) => {
         setCartItems(nuevosItems);
-        localStorage.setItem('chilero_carrito', JSON.stringify(nuevosItems));
+        localStorage.setItem(cartKey, JSON.stringify(nuevosItems));
         window.dispatchEvent(new Event('carrito_actualizado'));
     };
 
@@ -202,13 +205,13 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </svg>
                             <input 
                                 type="text" 
-                                placeholder="Buscar productos..."
+                                placeholder="Buscar productos..." 
                                 value={busqueda}
                                 onChange={(e) => setBusqueda(e.target.value)}
                             />
                         </form>
 
-                        {/* Botón naranja de Usuarios */}
+                        {/* Botón de Usuarios para Staff */}
                         {user && (esAdmin || esTrabajador) && (
                             <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                 Usuarios
@@ -274,9 +277,10 @@ const Header = ({ user, baseUrl = '/' }) => {
                 <div className="cart-modal-backdrop" onClick={() => setIsCartModalOpen(false)}>
                     <div className="cart-modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="cart-modal-header">
-                            <h3>🛒 Mi Carrito ({totalCantidad})</h3>
+                            <h3>🛍️ Mi Carrito ({totalCantidad})</h3>
                             <button className="cart-modal-close" onClick={() => setIsCartModalOpen(false)}>✕</button>
                         </div>
+
                         <div className="cart-modal-body">
                             {cartItems.length === 0 ? (
                                 <div className="cart-modal-empty">
@@ -314,7 +318,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                                     title="Quitar producto"
                                                     onClick={() => eliminarItem(item.id)}
                                                 >
-                                                    ✕
+                                                    🗑️
                                                 </button>
                                             </div>
                                         </div>
@@ -322,6 +326,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </div>
                             )}
                         </div>
+
                         {cartItems.length > 0 && (
                             <div className="cart-modal-footer">
                                 <div className="cart-modal-total">
