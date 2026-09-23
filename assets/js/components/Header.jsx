@@ -8,9 +8,33 @@ const Header = ({ user, baseUrl = '/' }) => {
 
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
     
-    // Validar si es cliente o visitante (no admin ni trabajador)
+    // Identificación de roles
     const userRole = user ? (user.tipo_usuario || user.rol || user.role) : null;
+    const esAdmin = userRole === 'admin';
+    const esTrabajador = userRole === 'trabajador' || userRole === 'empleado';
     const puedeUsarCarrito = !userRole || userRole === 'cliente';
+
+    // Detección infalible de ruta activa
+    const path = (typeof window !== 'undefined' ? window.location.pathname : '').toLowerCase();
+    const isProductos = path.includes('/productos');
+    const isReviews = path.includes('/reviews');
+    const isFavoritos = path.includes('/wishlist');
+    const isInicio = !isProductos && !isReviews && !isFavoritos && 
+                     !path.includes('/pedidos') && 
+                     !path.includes('/carrito') && 
+                     !path.includes('/usuarios') && 
+                     !path.includes('/auth');
+
+    // Estilo activo garantizado (con color --primary y línea abajo)
+    const activeStyle = {
+        color: 'var(--primary)',
+        fontWeight: '700',
+        borderBottom: '3px solid var(--primary)',
+        paddingBottom: '4px'
+    };
+    const inactiveStyle = {
+        paddingBottom: '4px'
+    };
 
     const sincronizarCarrito = () => {
         try {
@@ -83,27 +107,94 @@ const Header = ({ user, baseUrl = '/' }) => {
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
+                    {/* MENÚ CENTRAL */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-                        <ul className="nav-list">
-                            <li className="nav-item">
-                                <a href={`${cleanBase}index.php`} className="nav-link">Inicio</a>
-                            </li>
-                            <li className="nav-item">
-                                <a href={`${cleanBase}productos/index.php`} className="nav-link">Productos</a>
-                            </li>
-                            <li className="nav-item">
-                                <a href={`${cleanBase}reviews/index.php`} className="nav-link">Reseñas</a>
-                            </li>
-                            {user && puedeUsarCarrito && (
+                        {esAdmin ? (
+                            /* Administrador */
+                            <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}wishlist/index.php`} className="nav-link">Favoritos</a>
+                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
+                                        Página de Inicio
+                                    </a>
                                 </li>
-                            )}
-                        </ul>
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-primary-dark">
+                                        Gestionar Productos
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-primary">
+                                        Ver Reseñas
+                                    </a>
+                                </li>
+                            </ul>
+                        ) : esTrabajador ? (
+                            /* Empleado / Trabajador */
+                            <ul className="nav-list nav-list-buttons">
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
+                                        Página de Inicio
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-ok">
+                                        Ver Productos
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-ok">
+                                        Ver Reseñas
+                                    </a>
+                                </li>
+                            </ul>
+                        ) : (
+                            /* Cliente / Visitante */
+                            <ul className="nav-list">
+                                <li className="nav-item">
+                                    <a 
+                                        href={`${cleanBase}index.php`} 
+                                        className={`nav-link ${isInicio ? 'active' : ''}`}
+                                        style={isInicio ? activeStyle : inactiveStyle}
+                                    >
+                                        Inicio
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a 
+                                        href={`${cleanBase}productos/index.php`} 
+                                        className={`nav-link ${isProductos ? 'active' : ''}`}
+                                        style={isProductos ? activeStyle : inactiveStyle}
+                                    >
+                                        Productos
+                                    </a>
+                                </li>
+                                <li className="nav-item">
+                                    <a 
+                                        href={`${cleanBase}reviews/index.php`} 
+                                        className={`nav-link ${isReviews ? 'active' : ''}`}
+                                        style={isReviews ? activeStyle : inactiveStyle}
+                                    >
+                                        Reseñas
+                                    </a>
+                                </li>
+                                {user && puedeUsarCarrito && (
+                                    <li className="nav-item">
+                                        <a 
+                                            href={`${cleanBase}wishlist/index.php`} 
+                                            className={`nav-link ${isFavoritos ? 'active' : ''}`}
+                                            style={isFavoritos ? activeStyle : inactiveStyle}
+                                        >
+                                            Favoritos
+                                        </a>
+                                    </li>
+                                )}
+                            </ul>
+                        )}
                     </nav>
 
+                    {/* BLOQUE DERECHO */}
                     <div className="navbar-auth-wrapper">
-                        {/* Barra de búsqueda */}
+                        {/* Buscador */}
                         <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                             <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -117,14 +208,14 @@ const Header = ({ user, baseUrl = '/' }) => {
                             />
                         </form>
 
-                        {/* Botón de Usuarios situado a la derecha de la búsqueda */}
-                        {user && (userRole === 'admin' || userRole === 'trabajador') && (
+                        {/* Botón naranja de Usuarios */}
+                        {user && (esAdmin || esTrabajador) && (
                             <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                 Usuarios
                             </a>
                         )}
 
-                        {/* Mostrar carrito SOLO a clientes o usuarios sin login */}
+                        {/* Carrito solo clientes/visitantes */}
                         {puedeUsarCarrito && (
                             <button 
                                 type="button"
@@ -143,7 +234,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </button>
                         )}
 
-                        {/* Botón de pedidos */}
+                        {/* Pedidos */}
                         {user && (
                             <a 
                                 href={`${cleanBase}pedidos/index.php`} 
