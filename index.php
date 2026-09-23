@@ -3,16 +3,16 @@ require __DIR__ . '/config/db.php';
 require __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/functions.php';
 
-$pageTitle = 'Paso Chilero — Calzado que va con tu estilo';
+$pageTitle = 'Paso Chilero – Calzado que va con tu estilo';
 
-/* ---------- Productos destacados---------- */
+/* ---------- Productos destacados ---------- */
 $productosDestacados = [];
 try {
     $stmt = $pdo->query(
-        'SELECT p.*, c.nombre AS categoria_nombre
-         FROM producto p
-         LEFT JOIN categoria c ON c.id = p.id_categoria
-         ORDER BY p.id DESC
+        'SELECT p.*, c.nombre AS categoria_nombre 
+         FROM producto p 
+         LEFT JOIN categoria c ON c.id = p.id_categoria 
+         ORDER BY p.id DESC 
          LIMIT 5'
     );
     $productosDestacados = $stmt->fetchAll();
@@ -24,11 +24,11 @@ try {
 $reseniasDestacadas = [];
 try {
     $stmt = $pdo->query(
-        'SELECT r.*, u.nombre AS usuario_nombre, p.nombre AS producto_nombre
-         FROM reviews r
-         JOIN usuario u ON u.id = r.id_usuario
-         JOIN producto p ON p.id = r.id_producto
-         ORDER BY r.calificacion DESC, r.fecha DESC
+        'SELECT r.*, u.nombre AS usuario_nombre, p.nombre AS producto_nombre 
+         FROM reviews r 
+         JOIN usuario u ON u.id = r.id_usuario 
+         JOIN producto p ON p.id = r.id_producto 
+         ORDER BY r.calificacion DESC, r.fecha DESC 
          LIMIT 3'
     );
     $reseniasDestacadas = $stmt->fetchAll();
@@ -38,18 +38,19 @@ try {
 
 // Reseñas de respaldo mientras la tienda acumula reseñas reales
 $reseniasRespaldo = [
-    ['nombre' => 'Carlos M.', 'lugar' => 'Guatemala', 'calificacion' => 5,
+    ['nombre' => 'Carlos M.', 'lugar' => 'Guatemala', 'calificacion' => 5, 
      'comentario' => 'Me gustó mucho la variedad de estilos y la atención. Encontré justamente el tipo de zapato que estaba buscando.'],
-    ['nombre' => 'Andrea G.', 'lugar' => 'Mixco', 'calificacion' => 5,
+    ['nombre' => 'Andrea G.', 'lugar' => 'Mixco', 'calificacion' => 5, 
      'comentario' => 'El proceso de compra fue sencillo y el producto cumplió con lo que esperaba. Definitivamente volvería a comprar.'],
-    ['nombre' => 'Luis R.', 'lugar' => 'Villa Nueva', 'calificacion' => 5,
+    ['nombre' => 'Luis R.', 'lugar' => 'Villa Nueva', 'calificacion' => 5, 
      'comentario' => 'Muy buena experiencia. Hay diferentes opciones y los precios son bastante competitivos.'],
 ];
 
 require __DIR__ . '/includes/header.php';
 ?>
-<div class="landing">
 
+<div class="landing">
+    <!-- ===== HERO ===== -->
     <section class="hero" style="border-bottom:none;">
         <div>
             <span class="eyebrow">Guatemala</span>
@@ -69,24 +70,25 @@ require __DIR__ . '/includes/header.php';
         </div>
     </section>
 
-
+    <!-- ===== FEATURES ===== -->
     <section class="features-bar">
         <div class="features-grid">
             <div class="feature-item">
-                <strong><span class="dot">●</span>100% Guatemala</strong>
+                <strong><span class="dot">● </span>100% Guatemala</strong>
                 <span>Tienda y distribución nacional</span>
             </div>
             <div class="feature-item">
-                <strong><span class="dot">●</span>Calidad seleccionada</strong>
+                <strong><span class="dot">● </span>Calidad seleccionada</strong>
                 <span>Productos elegidos para nuestros clientes</span>
             </div>
             <div class="feature-item">
-                <strong><span class="dot">●</span>Atención cercana</strong>
+                <strong><span class="dot">● </span>Atención cercana</strong>
                 <span>Servicio pensado para cada cliente</span>
             </div>
         </div>
     </section>
 
+    <!-- ===== DESTACADOS ===== -->
     <section>
         <div class="products-head">
             <div>
@@ -127,6 +129,7 @@ require __DIR__ . '/includes/header.php';
         <?php endif; ?>
     </section>
 
+    <!-- ===== QUIÉNES SOMOS ===== -->
     <section>
         <div class="about-grid">
             <div class="about-visual">
@@ -158,7 +161,7 @@ require __DIR__ . '/includes/header.php';
         </div>
     </section>
 
-    <!-- ===== PROYECCIÓN ===== -->
+    <!-- ===== MISIÓN / VISIÓN ===== -->
     <section>
         <span class="eyebrow">Proyección</span>
         <div class="mv-grid" style="margin-top:16px;">
@@ -185,6 +188,7 @@ require __DIR__ . '/includes/header.php';
         </div>
     </section>
 
+    <!-- ===== RESEÑAS ===== -->
     <section>
         <span class="eyebrow">Testimonios</span>
         <h2 class="section-title">Reseñas</h2>
@@ -195,7 +199,7 @@ require __DIR__ . '/includes/header.php';
                     <div class="review-card">
                         <span class="stars"><?= str_repeat('★', (int)$r['calificacion']) . str_repeat('☆', 5 - (int)$r['calificacion']) ?></span>
                         <p class="comment">“<?= h($r['comentario']) ?>”</p>
-                        <div class="who"><?= h($r['usuario_nombre']) ?> · <?= h($r['producto_nombre']) ?></div>
+                        <div class="who"><?= h($r['usuario_nombre']) ?> • <?= h($r['producto_nombre']) ?></div>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -203,44 +207,44 @@ require __DIR__ . '/includes/header.php';
                     <div class="review-card">
                         <span class="stars"><?= str_repeat('★', $r['calificacion']) ?></span>
                         <p class="comment">“<?= h($r['comentario']) ?>”</p>
-                        <div class="who"><?= h($r['nombre']) ?> — <?= h($r['lugar']) ?></div>
+                        <div class="who"><?= h($r['nombre']) ?> • <?= h($r['lugar']) ?></div>
                     </div>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </section>
 
-<!-- ===== TIENDA / UBICACIÓN ===== -->
-<section>
-    <span class="eyebrow">Tienda física</span>
-    <h2 class="section-title" style="margin-bottom:24px;">Visítanos en Guatemala</h2>
-    <div class="store-grid">
-        <div class="store-card">
-            <div>
-                <h3>Paso Chilero — Guatemala</h3>
-                <p class="muted">Guatemala, Guatemala</p>
-                <p class="muted">Lun – Sáb: 9:00 – 18:00</p>
-                <p class="muted" style="margin-top:10px;">
-                    Visítanos para conocer nuestros productos, encontrar el estilo que buscas y recibir
-                    asesoramiento para elegir el calzado adecuado.
-                </p>
+    <!-- ===== TIENDA / UBICACIÓN ===== -->
+    <section>
+        <span class="eyebrow">Tienda física</span>
+        <h2 class="section-title" style="margin-bottom:24px;">Visítanos en Guatemala</h2>
+        <div class="store-grid">
+            <div class="store-card">
+                <div>
+                    <h3>Paso Chilero – Guatemala</h3>
+                    <p class="muted">Guatemala, Guatemala</p>
+                    <p class="muted">Lun – Sáb: 9:00 – 18:00</p>
+                    <p class="muted" style="margin-top:10px;">
+                        Visítanos para conocer nuestros productos, encontrar el estilo que buscas y recibir
+                        asesoramiento para elegir el calzado adecuado.
+                    </p>
+                </div>
+                <a class="btn-dark" href="<?= url('/productos/index.php') ?>">Ver productos</a>
             </div>
-            <a class="btn-dark" href="<?= url('/productos/index.php') ?>">Ver productos</a>
+            <div class="map-embed">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.587226264456!2d-90.5518585!3d14.622574599999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8589a1a52630905d%3A0xdb6544c413fe09bb!2sMeat%20Pack%20Miraflores!5e0!3m2!1ses-419!2sus!4v1790128598507!5m2!1ses-419!2sus"
+                    width="100%"
+                    height="100%"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="Ubicación Paso Chilero">
+                </iframe>
+            </div>
         </div>
-        <div class="map-embed">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.587226264456!2d-90.5518585!3d14.622574599999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8589a1a52630905d%3A0xdb6544c413fe09bb!2sMeat%20Pack%20Miraflores!5e0!3m2!1ses-419!2sus!4v1790128598507!5m2!1ses-419!2sus"
-                width="100%"
-                height="100%"
-                style="border:0;"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                title="Ubicación Paso Chilero">
-            </iframe>
-        </div>
-    </div>
-</section>
+    </section>
 
     <!-- ===== FOOTER DE CONTENIDO ===== -->
     <section class="content-footer" style="border-bottom:none;">
@@ -261,10 +265,10 @@ require __DIR__ . '/includes/header.php';
             <div class="cf-col">
                 <h4>Ayuda</h4>
                 <ul>
-                    <li><a href="#">Envíos</a></li>
-                    <li><a href="#">Cambios y devoluciones</a></li>
-                    <li><a href="#">Preguntas frecuentes</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    <li><a href="<?= url('/Pags_info/envios.php') ?>">Envíos</a></li>
+                    <li><a href="<?= url('/Pags_info/devoluciones.php') ?>">Cambios y devoluciones</a></li>
+                    <li><a href="<?= url('/Pags_info/faq.php') ?>">Preguntas frecuentes</a></li>
+                    <li><a href="<?= url('/Pags_info/contacto.php') ?>">Contacto</a></li>
                 </ul>
             </div>
         </div>
@@ -287,7 +291,7 @@ function agregarAlCarrito(producto) {
     }
     localStorage.setItem('chilero_carrito', JSON.stringify(carrito));
     window.dispatchEvent(new Event('carrito_actualizado'));
-    alert('¡"' + producto.nombre + '" agregado al carrito!');
+    alert('✓ "' + producto.nombre + '" agregado al carrito!');
 }
 </script>
 
