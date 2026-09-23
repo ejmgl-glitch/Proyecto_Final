@@ -1,4 +1,5 @@
 <?php
+// includes/header.php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,6 +18,7 @@ if (isset($_SESSION['user'])) {
 }
 
 $base_url = defined('BASE_URL') ? BASE_URL : '/';
+$hideHeader = $hideHeader ?? false;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -30,15 +32,17 @@ $base_url = defined('BASE_URL') ? BASE_URL : '/';
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
-    <div 
-        id="react-header" 
-        data-user='<?php echo htmlspecialchars(json_encode($user_session), ENT_QUOTES, 'UTF-8'); ?>'
-        data-baseurl="<?php echo htmlspecialchars($base_url, ENT_QUOTES, 'UTF-8'); ?>"
-    ></div>
 
-    <script 
-        type="text/babel" 
-        src="<?php echo rtrim($base_url, '/'); ?>/assets/js/components/Header.jsx">
-    </script>
+    <?php if (!$hideHeader): ?>
+        <div 
+            id="react-header" 
+            data-user='<?php echo htmlspecialchars(json_encode($user_session), ENT_QUOTES, 'UTF-8'); ?>'
+            data-baseurl="<?php echo htmlspecialchars($base_url, ENT_QUOTES, 'UTF-8'); ?>"
+        ></div>
+        <script 
+            type="text/babel" 
+            src="<?php echo rtrim($base_url, '/'); ?>/assets/js/components/Header.jsx">
+        </script>
+    <?php endif; ?>
 
     <main class="main-content">

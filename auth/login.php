@@ -37,15 +37,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $pageTitle = 'Iniciar sesión';
+
+// --- AQUÍ ESTÁ EL CAMBIO ---
+// Esta variable le indica a header.php que no dibuje la barra de navegación
+$hideHeader = true; 
+
 require __DIR__ . '/../includes/header.php';
 ?>
-<div class="card" style="max-width:420px;margin:0 auto;">
-    <h1>Iniciar sesión</h1>
 
+<div class="card" style="max-width:420px;margin:40px auto;">
+    <h1>Iniciar sesión</h1>
     <?php foreach ($errors as $e): ?>
         <div class="flash flash-error"><?= h($e) ?></div>
     <?php endforeach; ?>
-
     <form method="post" class="form-grid">
         <div>
             <label>Correo</label>
@@ -61,4 +65,5 @@ require __DIR__ . '/../includes/header.php';
         </div>
     </form>
 </div>
+
 <?php require __DIR__ . '/../includes/footer.php'; ?>
