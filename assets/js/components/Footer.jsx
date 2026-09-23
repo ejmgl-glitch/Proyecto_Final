@@ -1,20 +1,22 @@
-const Footer = ({ 
-    tagline = "Paso Chilero | Desarrollado por Kevin & Martín | © Todos los derechos reservados | Guatemala 2026",
-    links = [
-        { label: "Inicio", url: "/chileroPasos/index.php" },
-        { label: "Productos", url: "/chileroPasos/productos/index.php" },
-        { label: "Reseñas", url: "/chileroPasos/reviews/index.php" },
-        { label: "Lista de Deseos", url: "/chileroPasos/wishlist/index.php" }
-    ]
-}) => {
+const Footer = () => {
     const currentYear = new Date().getFullYear();
+    const footerContainer = document.getElementById('react-footer-root');
+    const baseUrl = footerContainer?.getAttribute('data-baseurl') || '/chileroPasos';
+    const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+
+    const links = [
+        { label: "Inicio", url: `${cleanBase}index.php` },
+        { label: "Productos", url: `${cleanBase}productos/index.php` },
+        { label: "Reseñas", url: `${cleanBase}reviews/index.php` },
+        { label: "Lista de Deseos", url: `${cleanBase}wishlist/index.php` }
+    ];
 
     return (
         <footer className="site-footer">
             <div className="footer-content" style={{
                 maxWidth: "1200px",
                 margin: "0 auto",
-                padding: "15px 20px",
+                padding: "20px 24px",
                 display: "flex",
                 flexWrap: "wrap",
                 justifyContent: "space-between",
@@ -23,13 +25,12 @@ const Footer = ({
             }}>
                 {/* Sección de Marca e Información */}
                 <div className="footer-brand">
-                    
-                    <p style={{ margin: 0, opacity: 0.8, fontSize: "0.9rem" }}>
-                        {tagline}
+                    <p style={{ margin: 0, fontSize: "0.88rem" }}>
+                        <strong>Paso Chilero</strong> | Desarrollado por Kevin &amp; Martín | © Todos los derechos reservados | Guatemala {currentYear}
                     </p>
                 </div>
 
-                {/* Navegación Reutilizable */}
+                {/* Navegación */}
                 <nav className="footer-nav">
                     <ul style={{
                         listStyle: "none",
@@ -44,9 +45,8 @@ const Footer = ({
                                 <a 
                                     href={link.url}
                                     style={{
-                                        textDecoration: "none",
-                                        color: "inherit",
-                                        fontSize: "0.95rem"
+                                        fontSize: "0.92rem",
+                                        fontWeight: 500
                                     }}
                                 >
                                     {link.label}
