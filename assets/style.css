@@ -201,6 +201,7 @@ textarea { resize: vertical; min-height: 70px; }
     justify-self: end;
     display: flex;
     align-items: center;
+    gap: 12px;
 }
 
 .user-profile {
@@ -688,4 +689,108 @@ textarea { resize: vertical; min-height: 70px; }
 @keyframes slideUpModal {
     from { transform: translateY(20px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
+}
+
+
+
+
+
+
+
+
+/* Modificación de la barra derecha para dar separación estética */
+.navbar-auth-wrapper {
+    justify-self: end;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Espacio de separación entre buscador, carrito y pedidos */
+}
+
+/* 4. Botón verde de Pedidos en el Header */
+.header-orders-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #27ae60;
+    color: #ffffff;
+    border: 1px solid #27ae60;
+    border-radius: 8px;
+    padding: 7px 12px;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-orders-button:hover {
+    background-color: #219150;
+    border-color: #219150;
+    color: #ffffff;
+}
+
+.header-orders-button svg {
+    flex-shrink: 0;
+}
+
+/* Estilos para el Historial de Pedidos */
+.order-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+}
+
+.order-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.order-item-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--border);
+}
+
+.order-item-row:last-child {
+    border-bottom: none;
+}
+
+.badge-estado {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.badge-realizado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.badge-enviado {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.badge-entregado {
+    background: #dcfce7;
+    color: #166534;
 }
