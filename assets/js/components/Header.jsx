@@ -17,8 +17,9 @@ const Header = ({ user, baseUrl = '/' }) => {
     // Clave de carrito única por usuario
     const cartKey = user && user.id ? `chilero_carrito_${user.id}` : 'chilero_carrito_guest';
 
-    // Detección infalible de ruta activa
+    // Detección de ruta activa y páginas de autenticación
     const path = (typeof window !== 'undefined' ? window.location.pathname : '').toLowerCase();
+    const isAuth = path.includes('/auth') || path.includes('login.php') || path.includes('register.php');
     const isProductos = path.includes('/productos');
     const isReviews = path.includes('/reviews');
     const isFavoritos = path.includes('/wishlist');
@@ -26,15 +27,15 @@ const Header = ({ user, baseUrl = '/' }) => {
                      !path.includes('/pedidos') && 
                      !path.includes('/carrito') && 
                      !path.includes('/usuarios') && 
-                     !path.includes('/auth');
+                     !isAuth;
 
-    // Estilo activo garantizado
     const activeStyle = {
         color: 'var(--primary)',
         fontWeight: '700',
         borderBottom: '3px solid var(--primary)',
         paddingBottom: '4px'
     };
+
     const inactiveStyle = {
         paddingBottom: '4px'
     };
@@ -49,7 +50,7 @@ const Header = ({ user, baseUrl = '/' }) => {
     };
 
     useEffect(() => {
-        if (puedeUsarCarrito) {
+        if (puedeUsarCarrito && !isAuth) {
             sincronizarCarrito();
             window.addEventListener('carrito_actualizado', sincronizarCarrito);
             window.addEventListener('storage', sincronizarCarrito);
@@ -58,7 +59,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                 window.removeEventListener('storage', sincronizarCarrito);
             };
         }
-    }, [puedeUsarCarrito, user]);
+    }, [puedeUsarCarrito, isAuth, user]);
 
     const actualizarStorage = (nuevosItems) => {
         setCartItems(nuevosItems);
@@ -112,7 +113,20 @@ const Header = ({ user, baseUrl = '/' }) => {
 
                     {/* MENÚ CENTRAL */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-                        {esAdmin ? (
+                        {isAuth ? (
+                            /* En páginas Login y Registro: solo botón Regresar a Página Principal con color --muted */
+                            <ul className="nav-list nav-list-buttons">
+                                <li className="nav-item">
+                                    <a 
+                                        href={`${cleanBase}index.php`} 
+                                        className="header-nav-btn btn-muted"
+                                        style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
+                                    >
+                                        &larr; Regresar a la Página Principal
+                                    </a>
+                                </li>
+                            </ul>
+                        ) : esAdmin ? (
                             /* Administrador */
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
@@ -197,29 +211,31 @@ const Header = ({ user, baseUrl = '/' }) => {
 
                     {/* BLOQUE DERECHO */}
                     <div className="navbar-auth-wrapper">
-                        {/* Buscador */}
-                        <form className="header-search-bar" onSubmit={handleSearchSubmit}>
-                            <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                            </svg>
-                            <input 
-                                type="text" 
-                                placeholder="Buscar productos..." 
-                                value={busqueda}
-                                onChange={(e) => setBusqueda(e.target.value)}
-                            />
-                        </form>
+                        {/* Buscador (se oculta en Login/Register) */}
+                        {!isAuth && (
+                            <form className="header-search-bar" onSubmit={handleSearchSubmit}>
+                                <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input 
+                                    type="text" 
+                                    placeholder="Buscar productos..." 
+                                    value={busqueda}
+                                    onChange={(e) => setBusqueda(e.target.value)}
+                                />
+                            </form>
+                        )}
 
-                        {/* Botón de Usuarios para Staff */}
-                        {user && (esAdmin || esTrabajador) && (
+                        {/* Botón de Usuarios para Staff (se oculta en Login/Register) */}
+                        {!isAuth && user && (esAdmin || esTrabajador) && (
                             <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                 Usuarios
                             </a>
                         )}
 
-                        {/* Carrito solo clientes/visitantes */}
-                        {puedeUsarCarrito && (
+                        {/* Carrito (se oculta en Login/Register) */}
+                        {!isAuth && puedeUsarCarrito && (
                             <button 
                                 type="button"
                                 className="header-cart-button"
@@ -237,8 +253,8 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </button>
                         )}
 
-                        {/* Pedidos */}
-                        {user && (
+                        {/* Pedidos (se oculta en Login/Register) */}
+                        {!isAuth && user && (
                             <a 
                                 href={`${cleanBase}pedidos/index.php`} 
                                 className="header-orders-button"
@@ -273,14 +289,13 @@ const Header = ({ user, baseUrl = '/' }) => {
             </header>
 
             {/* Modal de Carrito */}
-            {puedeUsarCarrito && isCartModalOpen && (
+            {!isAuth && puedeUsarCarrito && isCartModalOpen && (
                 <div className="cart-modal-backdrop" onClick={() => setIsCartModalOpen(false)}>
                     <div className="cart-modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="cart-modal-header">
                             <h3>🛍️ Mi Carrito ({totalCantidad})</h3>
                             <button className="cart-modal-close" onClick={() => setIsCartModalOpen(false)}>✕</button>
                         </div>
-
                         <div className="cart-modal-body">
                             {cartItems.length === 0 ? (
                                 <div className="cart-modal-empty">
@@ -314,7 +329,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                                     <button onClick={() => cambiarCantidad(item.id, 1)} className="btn-qty">+</button>
                                                 </div>
                                                 <button 
-                                                    className="btn-remove" 
+                                                    className="btn-remove"
                                                     title="Quitar producto"
                                                     onClick={() => eliminarItem(item.id)}
                                                 >
@@ -326,7 +341,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </div>
                             )}
                         </div>
-
                         {cartItems.length > 0 && (
                             <div className="cart-modal-footer">
                                 <div className="cart-modal-total">
