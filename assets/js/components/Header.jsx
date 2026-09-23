@@ -99,17 +99,11 @@ const Header = ({ user, baseUrl = '/' }) => {
                                     <a href={`${cleanBase}wishlist/index.php`} className="nav-link">Favoritos</a>
                                 </li>
                             )}
-                            {user && (userRole === 'admin' || userRole === 'trabajador') && (
-                                <li className="nav-item">
-                                    <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
-                                        Usuarios
-                                    </a>
-                                </li>
-                            )}
                         </ul>
                     </nav>
 
                     <div className="navbar-auth-wrapper">
+                        {/* Barra de búsqueda */}
                         <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                             <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8"></circle>
@@ -122,6 +116,13 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 onChange={(e) => setBusqueda(e.target.value)}
                             />
                         </form>
+
+                        {/* Botón de Usuarios situado a la derecha de la búsqueda */}
+                        {user && (userRole === 'admin' || userRole === 'trabajador') && (
+                            <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
+                                Usuarios
+                            </a>
+                        )}
 
                         {/* Mostrar carrito SOLO a clientes o usuarios sin login */}
                         {puedeUsarCarrito && (
@@ -185,7 +186,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                             <h3>🛒 Mi Carrito ({totalCantidad})</h3>
                             <button className="cart-modal-close" onClick={() => setIsCartModalOpen(false)}>✕</button>
                         </div>
-
                         <div className="cart-modal-body">
                             {cartItems.length === 0 ? (
                                 <div className="cart-modal-empty">
@@ -231,7 +231,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </div>
                             )}
                         </div>
-
                         {cartItems.length > 0 && (
                             <div className="cart-modal-footer">
                                 <div className="cart-modal-total">
