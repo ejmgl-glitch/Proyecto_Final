@@ -7,6 +7,8 @@ requireRole(['admin', 'trabajador']);
 
 $errors = [];
 $old = ['nombre'=>'','marca'=>'','descripcion'=>'','precio'=>'','color'=>'','genero'=>'hombre','id_categoria'=>'','imagen'=>''];
+$tallas = tallasDisponibles();
+$stockPorTalla = $_POST['stock'] ?? [];
 
 $categorias = $pdo->query('SELECT id, nombre FROM categoria ORDER BY nombre')->fetchAll();
 
@@ -24,9 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!is_numeric($old['precio']) || (float)$old['precio'] < 0) $errors[] = 'El precio debe ser un número válido.';
     if (!in_array($old['genero'], ['hombre','mujer','ninos'], true)) $errors[] = 'Género inválido.';
 
-
     if (!$errors) {
         $idCategoria = $old['id_categoria'] !== '' ? (int)$old['id_categoria'] : null;
+
+        $pdo->beginTransaction();
 
         $stmt = $pdo->prepare(
             'INSERT INTO producto (nombre, marca, descripcion, precio, color, genero, imagen, id_categoria)
@@ -36,6 +39,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old['nombre'], $old['marca'], $old['descripcion'],
             $old['precio'], $old['color'], $old['genero'], $old['imagen'], $idCategoria
         ]);
+        $idProducto = (int)$pdo->lastInsertId();
+
+        // Crear las variantes (talla + stock) que el admin haya cargado
+        $stmtVariante = $pdo->prepare(
+            'INSERT INTO variante_producto (id_producto, talla, stock, codigo_unico) VALUES (?, ?, ?, ?)'
+        );
+        foreach ($stockPorTalla as $talla => $stock) {
+            $stock = (int)$stock;
+            if ($stock > 0) {
+                $codigo = generarCodigoVariante($pdo, $old['nombre'], $idProducto, (string)$talla);
+                $stmtVariante->execute([$idProducto, $talla, $stock, $codigo]);
+            }
+        }
+
+        $pdo->commit();
+
         setFlash('ok', 'Producto creado correctamente.');
         redirect(url('/productos/index.php'));
     }
@@ -44,14 +63,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $pageTitle = 'Nuevo producto';
 require __DIR__ . '/../includes/header.php';
 ?>
-<div class="card" style="max-width:520px;">
+<div class="card" style="max-width:640px;">
     <h1>Nuevo producto</h1>
 
     <?php foreach ($errors as $e): ?>
         <div class="flash flash-error"><?= h($e) ?></div>
     <?php endforeach; ?>
 
-    <form method="post" class="form-grid">
+    <form method="post" class="form-grid" style="max-width:none;">
         <div>
             <label>Nombre</label>
             <input type="text" name="nombre" value="<?= h($old['nombre']) ?>" required>
@@ -95,10 +114,32 @@ require __DIR__ . '/../includes/header.php';
                 <?php endforeach; ?>
             </select>
         </div>
+
+        <div>
+            <label>Tallas y stock (US)</label>
+            <p class="muted" style="margin:0 0 8px;">Deja en 0 las tallas que no vas a ofrecer. El código único de cada talla se genera automáticamente.</p>
+            <div class="tallas-grid">
+                <?php foreach ($tallas as $t): ?>
+                    <div class="talla-box">
+                        <span>US <?= h($t) ?></span>
+                        <input type="number" min="0" name="stock[<?= h($t) ?>]" value="<?= h((string)($stockPorTalla[$t] ?? '0')) ?>">
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
         <div class="actions">
             <button class="btn" type="submit">Crear</button>
             <a class="btn btn-secondary" href="<?= url('/productos/index.php') ?>">Cancelar</a>
         </div>
     </form>
 </div>
+
+<style>
+.tallas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; }
+.talla-box { border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; background: #fff; }
+.talla-box span { display: block; font-size: 0.78rem; color: var(--muted); margin-bottom: 3px; }
+.talla-box input { padding: 5px 6px; font-size: 0.85rem; }
+</style>
+
 <?php require __DIR__ . '/../includes/footer.php'; ?>

@@ -30,10 +30,11 @@ const Carrito = ({ user, baseUrl = '/' }) => {
         window.dispatchEvent(new Event('carrito_actualizado'));
     };
 
-    const cambiarCantidad = (id, delta) => {
+    const cambiarCantidad = (idVariante, delta) => {
         const actualizados = items.map(item => {
-            if (item.id === id) {
-                const nuevaCant = item.cantidad + delta;
+            if (item.id_variante === idVariante) {
+                const tope = item.stockMax ?? Infinity;
+                const nuevaCant = Math.min(item.cantidad + delta, tope);
                 return nuevaCant > 0 ? { ...item, cantidad: nuevaCant } : null;
             }
             return item;
@@ -41,8 +42,8 @@ const Carrito = ({ user, baseUrl = '/' }) => {
         actualizarStorage(actualizados);
     };
 
-    const eliminarItem = (id) => {
-        const actualizados = items.filter(item => item.id !== id);
+    const eliminarItem = (idVariante) => {
+        const actualizados = items.filter(item => item.id_variante !== idVariante);
         actualizarStorage(actualizados);
     };
 
@@ -85,7 +86,10 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    items: items,
+                    items: items.map(i => ({
+                        id_variante: i.id_variante,
+                        cantidad: i.cantidad
+                    })),
                     metodo_pago: metodoPago
                 })
             });
@@ -151,6 +155,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                             <thead>
                                 <tr>
                                     <th>Producto</th>
+                                    <th>Talla</th>
                                     <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th>Subtotal</th>
@@ -159,7 +164,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                             </thead>
                             <tbody>
                                 {items.map((item) => (
-                                    <tr key={item.id}>
+                                    <tr key={item.id_variante}>
                                         <td style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                             {item.imagen && (
                                                 <img 
@@ -173,12 +178,17 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                                 {item.marca && <div className="muted">{item.marca}</div>}
                                             </div>
                                         </td>
+                                        <td>US {item.talla}</td>
                                         <td>Q {parseFloat(item.precio).toFixed(2)}</td>
                                         <td>
                                             <div className="qty-control">
-                                                <button onClick={() => cambiarCantidad(item.id, -1)} className="btn-qty">-</button>
+                                                <button onClick={() => cambiarCantidad(item.id_variante, -1)} className="btn-qty">-</button>
                                                 <span>{item.cantidad}</span>
-                                                <button onClick={() => cambiarCantidad(item.id, 1)} className="btn-qty">+</button>
+                                                <button
+                                                    onClick={() => cambiarCantidad(item.id_variante, 1)}
+                                                    className="btn-qty"
+                                                    disabled={item.stockMax != null && item.cantidad >= item.stockMax}
+                                                >+</button>
                                             </div>
                                         </td>
                                         <td style={{ fontWeight: 'bold' }}>
@@ -186,7 +196,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                         </td>
                                         <td>
                                             <button 
-                                                onClick={() => eliminarItem(item.id)} 
+                                                onClick={() => eliminarItem(item.id_variante)} 
                                                 className="btn-remove"
                                                 title="Eliminar producto"
                                             >

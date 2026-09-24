@@ -113,13 +113,7 @@ require __DIR__ . '/includes/header.php';
                         <p class="muted"><?= h($p['marca']) ?> • <?= h($p['categoria_nombre'] ?? 'Sin categoría') ?></p>
                         <p class="price">Q <?= number_format((float)$p['precio'], 2) ?></p>
                         <div class="actions" style="margin-top:10px;">
-                            <button type="button" class="btn btn-sm" onclick='agregarAlCarrito(<?= json_encode([
-                                "id"     => (int)$p["id"],
-                                "nombre" => $p["nombre"],
-                                "marca"  => $p["marca"],
-                                "precio" => (float)$p["precio"],
-                                "imagen" => $p["imagen"] ?? ""
-                            ]) ?>)'>+ Carrito</button>
+                            <a class="btn btn-sm" href="<?= url('/productos/index.php#producto-' . (int)$p['id']) ?>">Elegir talla</a>
                             <a class="btn btn-sm btn-secondary" href="<?= url('/reviews/index.php?id_producto=' . (int)$p['id']) ?>">Reseñas</a>
                         </div>
                     </div>
@@ -273,38 +267,5 @@ require __DIR__ . '/includes/header.php';
         </div>
     </section>
 </div>
-
-<script>
-function getCartKey() {
-    const user = <?= json_encode($_SESSION['user'] ?? null) ?>;
-    return user && user.id ? ('chilero_carrito_' + user.id) : 'chilero_carrito_guest';
-}
-
-function agregarAlCarrito(producto) {
-    const cartKey = getCartKey();
-    let carrito = [];
-    try {
-        carrito = JSON.parse(localStorage.getItem(cartKey)) || [];
-    } catch (e) {
-        carrito = [];
-    }
-    const index = carrito.findIndex(item => item.id === producto.id);
-    if (index !== -1) {
-        carrito[index].cantidad += 1;
-    } else {
-        carrito.push({ 
-            id: producto.id, 
-            nombre: producto.nombre, 
-            marca: producto.marca, 
-            precio: producto.precio, 
-            imagen: producto.imagen, 
-            cantidad: 1 
-        });
-    }
-    localStorage.setItem(cartKey, JSON.stringify(carrito));
-    window.dispatchEvent(new Event('carrito_actualizado'));
-    alert('🛒 "' + producto.nombre + '" agregado al carrito!');
-}
-</script>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>
