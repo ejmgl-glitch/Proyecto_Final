@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 24, 2026 at 04:07 AM
+-- Generation Time: Sep 24, 2026 at 05:28 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -52,6 +52,8 @@ CREATE TABLE `detalle_pedido` (
   `id` int(11) NOT NULL,
   `id_pedido` int(11) NOT NULL,
   `id_producto` int(11) NOT NULL,
+  `id_variante` int(11) DEFAULT NULL,
+  `talla` varchar(10) DEFAULT NULL,
   `cantidad` int(11) NOT NULL DEFAULT 1,
   `subtotal` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -60,9 +62,16 @@ CREATE TABLE `detalle_pedido` (
 -- Dumping data for table `detalle_pedido`
 --
 
-INSERT INTO `detalle_pedido` (`id`, `id_pedido`, `id_producto`, `cantidad`, `subtotal`) VALUES
-(1, 1, 1, 3, 4500.00),
-(2, 2, 1, 2, 3000.00);
+INSERT INTO `detalle_pedido` (`id`, `id_pedido`, `id_producto`, `id_variante`, `talla`, `cantidad`, `subtotal`) VALUES
+(1, 1, 1, NULL, NULL, 3, 4500.00),
+(2, 2, 1, NULL, NULL, 2, 3000.00),
+(3, 3, 4, 18, '9.5', 1, 750.00),
+(4, 3, 3, 13, '8.5', 2, 1798.00),
+(5, 3, 12, 57, '11', 2, 1398.00),
+(6, 4, 3, 13, '8.5', 1, 899.00),
+(7, 4, 5, 23, '12', 3, 1647.00),
+(8, 4, 3, 11, '7.5', 2, 1798.00),
+(9, 4, 4, 18, '9.5', 1, 750.00);
 
 -- --------------------------------------------------------
 
@@ -85,7 +94,9 @@ CREATE TABLE `pedido` (
 
 INSERT INTO `pedido` (`id`, `id_usuario`, `fecha`, `total`, `estado`, `metodo_pago`) VALUES
 (1, 6, '2026-09-22 17:28:47', 4500.00, 'realizado', 'pay pal'),
-(2, 7, '2026-09-22 20:27:17', 3000.00, 'entregado', 'transferencia');
+(2, 7, '2026-09-22 20:27:17', 3000.00, 'entregado', 'transferencia'),
+(3, 7, '2026-09-23 20:09:20', 3946.00, 'realizado', 'pay pal'),
+(4, 3, '2026-09-23 20:24:27', 5094.00, 'realizado', 'tarjeta');
 
 -- --------------------------------------------------------
 
@@ -191,6 +202,91 @@ CREATE TABLE `variante_producto` (
   `codigo_unico` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `variante_producto`
+--
+
+INSERT INTO `variante_producto` (`id`, `id_producto`, `talla`, `stock`, `codigo_unico`) VALUES
+(1, 1, '5', 5, 'AIR1-T05-NCSB'),
+(2, 1, '5.5', 15, 'AIR1-T55-PITC'),
+(3, 1, '7', 5, 'AIR1-T07-8WUC'),
+(4, 1, '10', 14, 'AIR1-T10-BHUE'),
+(5, 1, '11', 15, 'AIR1-T11-FEL3'),
+(6, 2, '5.5', 4, 'GRA2-T55-UWRT'),
+(7, 2, '6.5', 12, 'GRA2-T65-Q7NI'),
+(8, 2, '7.5', 7, 'GRA2-T75-ZIUS'),
+(9, 2, '8', 12, 'GRA2-T08-0K9E'),
+(10, 3, '6', 3, 'AIR3-T06-8CU2'),
+(11, 3, '7.5', 10, 'AIR3-T75-MMR2'),
+(12, 3, '8', 4, 'AIR3-T08-48RX'),
+(13, 3, '8.5', 0, 'AIR3-T85-0LUY'),
+(14, 3, '10', 16, 'AIR3-T10-KNYA'),
+(15, 4, '5.5', 3, 'CLA4-T55-HK0O'),
+(16, 4, '7.5', 17, 'CLA4-T75-CQT5'),
+(17, 4, '8.5', 15, 'CLA4-T85-5KOM'),
+(18, 4, '9.5', 12, 'CLA4-T95-8FGI'),
+(19, 4, '10.5', 9, 'CLA4-T105-A3GK'),
+(20, 5, '9.5', 12, 'DEL5-T95-8YSW'),
+(21, 5, '10.5', 3, 'DEL5-T105-Q58Y'),
+(22, 5, '11.5', 14, 'DEL5-T115-OORO'),
+(23, 5, '12', 5, 'DEL5-T12-CHFM'),
+(24, 6, '5', 5, 'CAS6-T05-8WCH'),
+(25, 6, '6', 14, 'CAS6-T06-FJMN'),
+(26, 6, '6.5', 5, 'CAS6-T65-ER9R'),
+(27, 6, '9.5', 11, 'CAS6-T95-DDMJ'),
+(28, 7, '5', 2, 'CHA7-T05-1KXD'),
+(29, 7, '6', 10, 'CHA7-T06-S6MI'),
+(30, 7, '6.5', 18, 'CHA7-T65-LI39'),
+(31, 7, '7.5', 8, 'CHA7-T75-330I'),
+(32, 7, '9', 18, 'CHA7-T09-R092'),
+(33, 7, '13', 17, 'CHA7-T13-JY8Q'),
+(34, 8, '5.5', 17, 'AIR8-T55-HHW6'),
+(35, 8, '6.5', 2, 'AIR8-T65-RX2D'),
+(36, 8, '10.5', 5, 'AIR8-T105-621R'),
+(37, 8, '11.5', 7, 'AIR8-T115-PWD8'),
+(38, 8, '12', 14, 'AIR8-T12-Q0DF'),
+(39, 8, '13', 6, 'AIR8-T13-AVQX'),
+(40, 9, '6', 2, 'DUR9-T06-A8XS'),
+(41, 9, '9', 6, 'DUR9-T09-P53H'),
+(42, 9, '10.5', 10, 'DUR9-T105-HS1L'),
+(43, 9, '11.5', 15, 'DUR9-T115-4C06'),
+(44, 9, '12', 18, 'DUR9-T12-P7ST'),
+(45, 9, '12.5', 18, 'DUR9-T125-S51V'),
+(46, 10, '7', 5, 'FRE10-T07-ULST'),
+(47, 10, '7.5', 5, 'FRE10-T75-5CGB'),
+(48, 10, '8.5', 5, 'FRE10-T85-SU16'),
+(49, 10, '9.5', 16, 'FRE10-T95-L9VH'),
+(50, 11, '6.5', 18, 'MOT11-T65-57JU'),
+(51, 11, '9', 8, 'MOT11-T09-4EEP'),
+(52, 11, '10.5', 4, 'MOT11-T105-YPHK'),
+(53, 11, '12', 5, 'MOT11-T12-6FZX'),
+(54, 11, '12.5', 6, 'MOT11-T125-JEQ0'),
+(55, 12, '6', 9, 'OXF12-T06-FPSM'),
+(56, 12, '10', 8, 'OXF12-T10-MDNM'),
+(57, 12, '11', 14, 'OXF12-T11-PALW'),
+(58, 12, '12.5', 18, 'OXF12-T125-8E7I'),
+(59, 13, '5', 7, 'DER13-T05-JEP6'),
+(60, 13, '6', 10, 'DER13-T06-OTSR'),
+(61, 13, '7', 12, 'DER13-T07-DCYP'),
+(62, 13, '9', 4, 'DER13-T09-JADJ'),
+(63, 14, '5.5', 2, 'LOA14-T55-MT7J'),
+(64, 14, '6', 6, 'LOA14-T06-BZ78'),
+(65, 14, '7', 10, 'LOA14-T07-BHLK'),
+(66, 14, '8.5', 8, 'LOA14-T85-KSGM'),
+(67, 14, '11.5', 2, 'LOA14-T115-9BAS'),
+(68, 14, '13', 8, 'LOA14-T13-SIQX'),
+(69, 15, '8', 11, 'OXF15-T08-Y9M3'),
+(70, 15, '9', 6, 'OXF15-T09-OMBE'),
+(71, 15, '11.5', 4, 'OXF15-T115-W5PB'),
+(72, 15, '12', 14, 'OXF15-T12-5YKI'),
+(73, 15, '12.5', 11, 'OXF15-T125-BGJA'),
+(74, 15, '13', 13, 'OXF15-T13-89TI'),
+(75, 16, '5', 14, 'LOA16-T05-DKXI'),
+(76, 16, '6', 2, 'LOA16-T06-D3FV'),
+(77, 16, '7.5', 14, 'LOA16-T75-AKIV'),
+(78, 16, '8', 18, 'LOA16-T08-4F62'),
+(79, 16, '10.5', 14, 'LOA16-T105-1ZRK');
+
 -- --------------------------------------------------------
 
 --
@@ -209,8 +305,9 @@ CREATE TABLE `wishlist` (
 
 INSERT INTO `wishlist` (`id`, `id_usuario`, `id_producto`) VALUES
 (2, 6, 1),
-(5, 7, 1),
-(6, 3, 1);
+(6, 3, 1),
+(7, 7, 3),
+(8, 7, 9);
 
 --
 -- Indexes for dumped tables
@@ -228,7 +325,8 @@ ALTER TABLE `categoria`
 ALTER TABLE `detalle_pedido`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_pedido` (`id_pedido`),
-  ADD KEY `id_producto` (`id_producto`);
+  ADD KEY `id_producto` (`id_producto`),
+  ADD KEY `id_variante` (`id_variante`);
 
 --
 -- Indexes for table `pedido`
@@ -264,6 +362,7 @@ ALTER TABLE `usuario`
 --
 ALTER TABLE `variante_producto`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uniq_producto_talla` (`id_producto`,`talla`),
   ADD UNIQUE KEY `codigo_unico` (`codigo_unico`),
   ADD KEY `id_producto` (`id_producto`);
 
@@ -289,13 +388,13 @@ ALTER TABLE `categoria`
 -- AUTO_INCREMENT for table `detalle_pedido`
 --
 ALTER TABLE `detalle_pedido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `pedido`
 --
 ALTER TABLE `pedido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `producto`
@@ -319,13 +418,13 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT for table `variante_producto`
 --
 ALTER TABLE `variante_producto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT for table `wishlist`
 --
 ALTER TABLE `wishlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints for dumped tables
@@ -336,7 +435,8 @@ ALTER TABLE `wishlist`
 --
 ALTER TABLE `detalle_pedido`
   ADD CONSTRAINT `detalle_pedido_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedido` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `detalle_pedido_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `detalle_pedido_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `producto` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `detalle_pedido_ibfk_3` FOREIGN KEY (`id_variante`) REFERENCES `variante_producto` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Constraints for table `pedido`
