@@ -5,6 +5,7 @@ const Header = ({ user, baseUrl = '/' }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isCartModalOpen, setIsCartModalOpen] = useState(false);
     const [busqueda, setBusqueda] = useState('');
+
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
 
     // Identificación de roles
@@ -23,10 +24,10 @@ const Header = ({ user, baseUrl = '/' }) => {
     const isReviews = path.includes('/reviews');
     const isFavoritos = path.includes('/wishlist');
     const isInicio = !isProductos && !isReviews && !isFavoritos && 
-                      !path.includes('/pedidos') && 
-                      !path.includes('/carrito') && 
-                      !path.includes('/usuarios') && 
-                      !isAuth;
+                     !path.includes('/pedidos') && 
+                     !path.includes('/carrito') && 
+                     !path.includes('/usuarios') && 
+                     !isAuth;
 
     const activeStyle = {
         color: 'var(--primary)',
@@ -96,9 +97,9 @@ const Header = ({ user, baseUrl = '/' }) => {
     return (
         <>
             <header className="main-navbar">
-                <div className="navbar-container">
+                <div className="navbar-container" style={{ maxWidth: '1280px', gap: '15px' }}>
                     {/* LOGO + NOMBRE DE LA TIENDA */}
-                    <div className="navbar-brand-wrapper">
+                    <div className="navbar-brand-wrapper" style={{ flexShrink: 0, marginRight: '20px' }}>
                         <a 
                             href={`${cleanBase}index.php`} 
                             className="navbar-brand"
@@ -125,6 +126,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                         </a>
                     </div>
 
+                    {/* BOTÓN HAMBURGUESA MÓVIL */}
                     <button 
                         className="navbar-toggler" 
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -133,9 +135,9 @@ const Header = ({ user, baseUrl = '/' }) => {
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
-                    {/* MENÚ DESPLEGABLE (MÓVIL Y DESKTOP) */}
-                    <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
-                        {/* Buscador dentro del menú para pantallas móviles */}
+                    {/* MENÚ DE NAVEGACIÓN (DESKTOP Y MÓVIL) */}
+                    <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`} style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
+                        {/* Buscador dentro del menú móvil */}
                         {!isAuth && (
                             <form className="mobile-search-bar" onSubmit={handleSearchSubmit}>
                                 <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -151,21 +153,13 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </form>
                         )}
 
+                        {/* ENLACES Y BOTONES ORIGINALES BIEN DISTRIBUIDOS */}
                         {isAuth ? (
-                            <ul className="nav-list nav-list-buttons">
-                                <li className="nav-item">
-                                    <a 
-                                        href={`${cleanBase}index.php`} 
-                                        className="header-nav-btn btn-muted"
-                                        style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        &larr; Regresar a la Página Principal
-                                    </a>
-                                </li>
-                            </ul>
+                            /* En Login y Registro el centro queda vacío para evitar el botón duplicado */
+                            null
                         ) : esAdmin ? (
-                            <ul className="nav-list nav-list-buttons">
+                            /* Botones originales del Administrador */
+                            <ul className="nav-list nav-list-buttons" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0, padding: 0 }}>
                                 <li className="nav-item">
                                     <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted" onClick={() => setIsMenuOpen(false)}>
                                         Página de Inicio
@@ -183,7 +177,8 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </li>
                             </ul>
                         ) : esTrabajador ? (
-                            <ul className="nav-list nav-list-buttons">
+                            /* Botones originales del Trabajador / Empleado */
+                            <ul className="nav-list nav-list-buttons" style={{ display: 'flex', alignItems: 'center', gap: '10px', margin: 0, padding: 0 }}>
                                 <li className="nav-item">
                                     <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted" onClick={() => setIsMenuOpen(false)}>
                                         Página de Inicio
@@ -201,6 +196,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </li>
                             </ul>
                         ) : (
+                            /* Enlaces limpios para el Cliente */
                             <ul className="nav-list">
                                 <li className="nav-item">
                                     <a 
@@ -247,8 +243,19 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </ul>
                         )}
 
-                        {/* ACCIONES MÓVILES: Carrito, Pedidos, Usuarios */}
-                        {!isAuth && (
+                        {/* ACCIONES DEL MENÚ MÓVIL (Hamburguesa) */}
+                        {isAuth ? (
+                            <div className="mobile-menu-section" style={{ borderTop: 'none', marginTop: 0, paddingTop: 0 }}>
+                                <a 
+                                    href={`${cleanBase}index.php`} 
+                                    className="mobile-menu-item-link"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <span>&larr; Regresar a la Página Principal</span>
+                                    <span style={{ color: 'var(--muted)' }}>&rarr;</span>
+                                </a>
+                            </div>
+                        ) : (
                             <div className="mobile-menu-section">
                                 {puedeUsarCarrito && (
                                     <button 
@@ -323,6 +330,11 @@ const Header = ({ user, baseUrl = '/' }) => {
                                     <div className="mobile-user-greeting">
                                         <span>Conectado como</span>
                                         <strong>{user.nombre || user.username || 'Usuario'}</strong>
+                                        {(esAdmin || esTrabajador) && (
+                                            <span style={{ fontSize: '0.78rem', color: 'var(--primary)', fontWeight: 600, textTransform: 'capitalize' }}>
+                                                Rol: {userRole}
+                                            </span>
+                                        )}
                                     </div>
                                     <a 
                                         href={`${cleanBase}auth/logout.php`} 
@@ -356,7 +368,8 @@ const Header = ({ user, baseUrl = '/' }) => {
                     </nav>
 
                     {/* BLOQUE DERECHO (DESKTOP) */}
-                    <div className="navbar-auth-wrapper">
+                    <div className="navbar-auth-wrapper" style={{ flexShrink: 0, marginLeft: '15px', gap: '10px' }}>
+                        {/* Buscador */}
                         {!isAuth && (
                             <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                                 <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -372,12 +385,34 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </form>
                         )}
 
+                        {/* Botón de Usuarios para Staff con icono y altura alineada */}
                         {!isAuth && user && (esAdmin || esTrabajador) && (
-                            <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
-                                Usuarios
+                            <a 
+                                href={`${cleanBase}usuarios/index.php`} 
+                                className="badge-admin"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '6px 11px',
+                                    borderRadius: '6px',
+                                    fontSize: '0.86rem',
+                                    fontWeight: '600',
+                                    textDecoration: 'none',
+                                    boxSizing: 'border-box'
+                                }}
+                            >
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
+                                <span>Usuarios</span>
                             </a>
                         )}
 
+                        {/* Carrito de Compras (Solo clientes) */}
                         {!isAuth && puedeUsarCarrito && (
                             <button 
                                 type="button"
@@ -396,6 +431,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </button>
                         )}
 
+                        {/* Botón de Gestión de Pedidos */}
                         {!isAuth && user && (
                             <a 
                                 href={`${cleanBase}pedidos/index.php`} 
@@ -413,6 +449,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </a>
                         )}
 
+                        {/* Perfil del usuario o Botones de acceso */}
                         {user ? (
                             <div className="user-profile">
                                 <span className="user-greeting">
@@ -493,7 +530,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                                     <button onClick={() => cambiarCantidad(item.id, 1)} className="btn-qty">+</button>
                                                 </div>
                                                 <button 
-                                                    className="btn-remove"
+                                                    className="btn-remove" 
                                                     title="Quitar producto"
                                                     onClick={() => eliminarItem(item.id)}
                                                 >
