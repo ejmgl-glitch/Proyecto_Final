@@ -31,7 +31,7 @@ require __DIR__ . '/../includes/header.php';
         <div class="product-card">
             <h3><?= h($p['nombre']) ?></h3>
             <p class="muted"><?= h($p['marca']) ?></p>
-            <p class="price">$<?= number_format((float)$p['precio'], 2) ?></p>
+            <p class="price">Q<?= number_format((float)$p['precio'], 2) ?></p>
             <div class="actions" style="margin-top:10px;">
                 <form method="post" action="<?= url('/wishlist/remove.php') ?>">
                     <input type="hidden" name="id_producto" value="<?= (int)$p['id'] ?>">
