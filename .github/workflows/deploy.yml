@@ -19,4 +19,4 @@ jobs:
           server: ${{ secrets.ftpupload.net }}
           username: ${{ secrets.if0_43004858 }}
           password: ${{ secrets.Y3N9RR7dMoTm5S }}
-          server-dir: htdocs/
+          server-dir: ./htdocs/
