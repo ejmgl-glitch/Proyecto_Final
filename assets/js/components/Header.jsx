@@ -88,6 +88,7 @@ const Header = ({ user, baseUrl = '/' }) => {
     const handleSearchSubmit = (e) => {
         e.preventDefault();
         if (busqueda.trim() !== '') {
+            setIsMenuOpen(false);
             window.location.href = `${cleanBase}productos/index.php?buscar=${encodeURIComponent(busqueda.trim())}`;
         }
     };
@@ -132,36 +133,51 @@ const Header = ({ user, baseUrl = '/' }) => {
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
-                    {/* MENÚ CENTRAL */}
+                    {/* MENÚ DESPLEGABLE (MÓVIL Y DESKTOP) */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
+                        {/* Buscador dentro del menú para pantallas móviles */}
+                        {!isAuth && (
+                            <form className="mobile-search-bar" onSubmit={handleSearchSubmit}>
+                                <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                                <input 
+                                    type="text" 
+                                    placeholder="Buscar calzado o marca..." 
+                                    value={busqueda}
+                                    onChange={(e) => setBusqueda(e.target.value)}
+                                />
+                            </form>
+                        )}
+
                         {isAuth ? (
-                            isMenuOpen && (
-                                <ul className="nav-list nav-list-buttons">
-                                    <li className="nav-item">
-                                        <a 
-                                            href={`${cleanBase}index.php`} 
-                                            className="header-nav-btn btn-muted"
-                                            style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
-                                        >
-                                            &larr; Regresar a la Página Principal
-                                        </a>
-                                    </li>
-                                </ul>
-                            )
+                            <ul className="nav-list nav-list-buttons">
+                                <li className="nav-item">
+                                    <a 
+                                        href={`${cleanBase}index.php`} 
+                                        className="header-nav-btn btn-muted"
+                                        style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        &larr; Regresar a la Página Principal
+                                    </a>
+                                </li>
+                            </ul>
                         ) : esAdmin ? (
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
+                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted" onClick={() => setIsMenuOpen(false)}>
                                         Página de Inicio
                                     </a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-primary-dark">
+                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-primary-dark" onClick={() => setIsMenuOpen(false)}>
                                         Gestionar Productos
                                     </a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-primary">
+                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-primary" onClick={() => setIsMenuOpen(false)}>
                                         Ver Reseñas
                                     </a>
                                 </li>
@@ -169,17 +185,17 @@ const Header = ({ user, baseUrl = '/' }) => {
                         ) : esTrabajador ? (
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
+                                    <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted" onClick={() => setIsMenuOpen(false)}>
                                         Página de Inicio
                                     </a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-ok">
+                                    <a href={`${cleanBase}productos/index.php`} className="header-nav-btn btn-ok" onClick={() => setIsMenuOpen(false)}>
                                         Ver Productos
                                     </a>
                                 </li>
                                 <li className="nav-item">
-                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-ok">
+                                    <a href={`${cleanBase}reviews/index.php`} className="header-nav-btn btn-ok" onClick={() => setIsMenuOpen(false)}>
                                         Ver Reseñas
                                     </a>
                                 </li>
@@ -191,6 +207,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                         href={`${cleanBase}index.php`} 
                                         className={`nav-link ${isInicio ? 'active' : ''}`}
                                         style={isInicio ? activeStyle : inactiveStyle}
+                                        onClick={() => setIsMenuOpen(false)}
                                     >
                                         Inicio
                                     </a>
@@ -200,6 +217,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                         href={`${cleanBase}productos/index.php`} 
                                         className={`nav-link ${isProductos ? 'active' : ''}`}
                                         style={isProductos ? activeStyle : inactiveStyle}
+                                        onClick={() => setIsMenuOpen(false)}
                                     >
                                         Productos
                                     </a>
@@ -209,6 +227,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                         href={`${cleanBase}reviews/index.php`} 
                                         className={`nav-link ${isReviews ? 'active' : ''}`}
                                         style={isReviews ? activeStyle : inactiveStyle}
+                                        onClick={() => setIsMenuOpen(false)}
                                     >
                                         Reseñas
                                     </a>
@@ -219,6 +238,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                             href={`${cleanBase}wishlist/index.php`} 
                                             className={`nav-link ${isFavoritos ? 'active' : ''}`}
                                             style={isFavoritos ? activeStyle : inactiveStyle}
+                                            onClick={() => setIsMenuOpen(false)}
                                         >
                                             Favoritos
                                         </a>
@@ -226,9 +246,116 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 )}
                             </ul>
                         )}
+
+                        {/* ACCIONES MÓVILES: Carrito, Pedidos, Usuarios */}
+                        {!isAuth && (
+                            <div className="mobile-menu-section">
+                                {puedeUsarCarrito && (
+                                    <button 
+                                        type="button" 
+                                        className="mobile-menu-item-btn"
+                                        onClick={() => {
+                                            setIsMenuOpen(false);
+                                            setIsCartModalOpen(true);
+                                        }}
+                                    >
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <circle cx="9" cy="21" r="1"></circle>
+                                                <circle cx="20" cy="21" r="1"></circle>
+                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                            </svg>
+                                            Mi Carrito
+                                        </span>
+                                        {totalCantidad > 0 ? (
+                                            <span className="mobile-cart-badge">{totalCantidad}</span>
+                                        ) : (
+                                            <span className="muted" style={{ fontSize: '0.82rem' }}>Vacío</span>
+                                        )}
+                                    </button>
+                                )}
+
+                                {user && (
+                                    <a 
+                                        href={`${cleanBase}pedidos/index.php`} 
+                                        className="mobile-menu-item-link"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                                <polyline points="14 2 14 8 20 8"></polyline>
+                                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                                <polyline points="10 9 9 9 8 9"></polyline>
+                                            </svg>
+                                            {puedeUsarCarrito ? 'Mis Pedidos' : 'Gestión de Pedidos'}
+                                        </span>
+                                        <span style={{ color: 'var(--muted)' }}>&rarr;</span>
+                                    </a>
+                                )}
+
+                                {user && (esAdmin || esTrabajador) && (
+                                    <a 
+                                        href={`${cleanBase}usuarios/index.php`} 
+                                        className="mobile-menu-item-link"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                                <circle cx="9" cy="7" r="4"></circle>
+                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            </svg>
+                                            Administrar Usuarios
+                                        </span>
+                                        <span className="badge-admin" style={{ padding: '2px 7px', fontSize: '0.78rem' }}>Staff</span>
+                                    </a>
+                                )}
+                            </div>
+                        )}
+
+                        {/* BLOQUE DE USUARIO / ACCESO EN MÓVIL */}
+                        <div className="mobile-auth-wrapper">
+                            {user ? (
+                                <div className="mobile-user-box">
+                                    <div className="mobile-user-greeting">
+                                        <span>Conectado como</span>
+                                        <strong>{user.nombre || user.username || 'Usuario'}</strong>
+                                    </div>
+                                    <a 
+                                        href={`${cleanBase}auth/logout.php`} 
+                                        className="btn-logout"
+                                        style={{ textAlign: 'center', width: '100%', display: 'block', padding: '10px 14px' }}
+                                    >
+                                        Cerrar Sesión
+                                    </a>
+                                </div>
+                            ) : (
+                                <div className="mobile-auth-btns">
+                                    <a 
+                                        href={`${cleanBase}auth/login.php`} 
+                                        className="btn-login"
+                                        style={{ textAlign: 'center', flex: 1, padding: '10px 14px' }}
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Ingresar
+                                    </a>
+                                    <a 
+                                        href={`${cleanBase}auth/register.php`} 
+                                        className="btn-register"
+                                        style={{ textAlign: 'center', flex: 1, padding: '10px 14px' }}
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Registro
+                                    </a>
+                                </div>
+                            )}
+                        </div>
                     </nav>
 
-                    {/* BLOQUE DERECHO */}
+                    {/* BLOQUE DERECHO (DESKTOP) */}
                     <div className="navbar-auth-wrapper">
                         {!isAuth && (
                             <form className="header-search-bar" onSubmit={handleSearchSubmit}>
