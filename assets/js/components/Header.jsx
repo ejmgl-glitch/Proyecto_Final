@@ -5,9 +5,8 @@ const Header = ({ user, baseUrl = '/' }) => {
     const [cartItems, setCartItems] = useState([]);
     const [isCartModalOpen, setIsCartModalOpen] = useState(false);
     const [busqueda, setBusqueda] = useState('');
-
     const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-    
+
     // Identificación de roles
     const userRole = user ? (user.tipo_usuario || user.rol || user.role) : null;
     const esAdmin = userRole === 'admin';
@@ -24,10 +23,10 @@ const Header = ({ user, baseUrl = '/' }) => {
     const isReviews = path.includes('/reviews');
     const isFavoritos = path.includes('/wishlist');
     const isInicio = !isProductos && !isReviews && !isFavoritos && 
-                     !path.includes('/pedidos') && 
-                     !path.includes('/carrito') && 
-                     !path.includes('/usuarios') && 
-                     !isAuth;
+                      !path.includes('/pedidos') && 
+                      !path.includes('/carrito') && 
+                      !path.includes('/usuarios') && 
+                      !isAuth;
 
     const activeStyle = {
         color: 'var(--primary)',
@@ -97,9 +96,31 @@ const Header = ({ user, baseUrl = '/' }) => {
         <>
             <header className="main-navbar">
                 <div className="navbar-container">
+                    {/* LOGO + NOMBRE DE LA TIENDA */}
                     <div className="navbar-brand-wrapper">
-                        <a href={`${cleanBase}index.php`} className="navbar-brand">
-                            <span className="brand-highlight">Paso </span>Chilero
+                        <a 
+                            href={`${cleanBase}index.php`} 
+                            className="navbar-brand"
+                            style={{ 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '10px', 
+                                textDecoration: 'none' 
+                            }}
+                        >
+                            <img 
+                                src={`${cleanBase}assets/img/logo.svg`} 
+                                alt="Logo Paso Chilero" 
+                                style={{ 
+                                    width: '38px', 
+                                    height: '38px', 
+                                    objectFit: 'contain', 
+                                    borderRadius: '8px',
+                                    display: 'block',
+                                    flexShrink: 0
+                                }} 
+                            />
+                            <span><span className="brand-highlight">Paso </span>Chilero</span>
                         </a>
                     </div>
 
@@ -111,7 +132,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                         <span className="toggler-icon">{isMenuOpen ? '✕' : '☰'}</span>
                     </button>
 
-                    {/* MENÚ CENTRAL (En pantallas de Auth no se muestra nada en el centro) */}
+                    {/* MENÚ CENTRAL */}
                     <nav className={`nav-menu ${isMenuOpen ? 'active' : ''}`}>
                         {isAuth ? (
                             isMenuOpen && (
@@ -128,7 +149,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </ul>
                             )
                         ) : esAdmin ? (
-                            /* Administrador */
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
                                     <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
@@ -147,7 +167,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </li>
                             </ul>
                         ) : esTrabajador ? (
-                            /* Empleado / Trabajador */
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
                                     <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted">
@@ -166,7 +185,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                                 </li>
                             </ul>
                         ) : (
-                            /* Cliente / Visitante */
                             <ul className="nav-list">
                                 <li className="nav-item">
                                     <a 
@@ -212,7 +230,6 @@ const Header = ({ user, baseUrl = '/' }) => {
 
                     {/* BLOQUE DERECHO */}
                     <div className="navbar-auth-wrapper">
-                        {/* Buscador (oculto en pantallas de Auth) */}
                         {!isAuth && (
                             <form className="header-search-bar" onSubmit={handleSearchSubmit}>
                                 <svg className="search-icon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -228,14 +245,12 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </form>
                         )}
 
-                        {/* Botón de Usuarios para Staff (oculto en Auth) */}
                         {!isAuth && user && (esAdmin || esTrabajador) && (
                             <a href={`${cleanBase}usuarios/index.php`} className="nav-link badge-admin">
                                 Usuarios
                             </a>
                         )}
 
-                        {/* Carrito (oculto en Auth) */}
                         {!isAuth && puedeUsarCarrito && (
                             <button 
                                 type="button"
@@ -254,7 +269,6 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </button>
                         )}
 
-                        {/* Pedidos (oculto en Auth) */}
                         {!isAuth && user && (
                             <a 
                                 href={`${cleanBase}pedidos/index.php`} 
@@ -275,13 +289,12 @@ const Header = ({ user, baseUrl = '/' }) => {
                         {user ? (
                             <div className="user-profile">
                                 <span className="user-greeting">
-                                    👤 <strong>{user.nombre || user.username || 'Usuario'}</strong>
+                                    Hola, <strong>{user.nombre || user.username || 'Usuario'}</strong>
                                 </span>
                                 <a href={`${cleanBase}auth/logout.php`} className="btn-logout">Salir</a>
                             </div>
                         ) : (
                             <div className="auth-buttons">
-                                {/* Botón "Regresar a la Página Principal" situado a la par de Ingresar */}
                                 {isAuth && (
                                     <a 
                                         href={`${cleanBase}index.php`} 
@@ -312,12 +325,12 @@ const Header = ({ user, baseUrl = '/' }) => {
                 </div>
             </header>
 
-            {/* Modal de Carrito */}
+            {/* MODAL DE CARRITO */}
             {!isAuth && puedeUsarCarrito && isCartModalOpen && (
                 <div className="cart-modal-backdrop" onClick={() => setIsCartModalOpen(false)}>
                     <div className="cart-modal-content" onClick={(e) => e.stopPropagation()}>
                         <div className="cart-modal-header">
-                            <h3>🛍️ Mi Carrito ({totalCantidad})</h3>
+                            <h3>🛒 Mi Carrito ({totalCantidad})</h3>
                             <button className="cart-modal-close" onClick={() => setIsCartModalOpen(false)}>✕</button>
                         </div>
                         <div className="cart-modal-body">
@@ -357,7 +370,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                                                     title="Quitar producto"
                                                     onClick={() => eliminarItem(item.id)}
                                                 >
-                                                    🗑️
+                                                    ✕
                                                 </button>
                                             </div>
                                         </div>
