@@ -30,6 +30,7 @@ require __DIR__ . '/../includes/header.php';
     <?php foreach ($items as $p): ?>
         <div class="product-card">
             <h3><?= h($p['nombre']) ?></h3>
+            <img src="<?= h($p['imagen']) ?>" alt="<?= h($p['nombre']) ?>" class="product-thumb">
             <p class="muted"><?= h($p['marca']) ?></p>
             <p class="price">Q<?= number_format((float)$p['precio'], 2) ?></p>
             <div class="actions" style="margin-top:10px;">
