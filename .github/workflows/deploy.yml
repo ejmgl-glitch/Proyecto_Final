@@ -16,7 +16,7 @@ jobs:
       - name: Subir cambios a InfinityFree
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          server: ${{ secrets.ftpupload.net }}
-          username: ${{ secrets.if0_43004858 }}
-          password: ${{ secrets.Y3N9RR7dMoTm5S }}
-          server-dir: ./htdocs/
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: htdocs/
