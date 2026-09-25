@@ -1,0 +1,22 @@
+name: Deploy a InfinityFree
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  web-deploy:
+    name: Sincronizar via FTP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar codigo del repositorio
+        uses: actions/checkout@v4
+
+      - name: Subir cambios a InfinityFree
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.ftpupload.net }}
+          username: ${{ secrets.if0_43004858 }}
+          password: ${{ secrets.Y3N9RR7dMoTm5S }}
+          server-dir: htdocs/
