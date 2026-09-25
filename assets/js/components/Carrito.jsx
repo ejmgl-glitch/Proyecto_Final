@@ -103,7 +103,9 @@ const Carrito = ({ user, baseUrl = '/' }) => {
             actualizarStorage([]);
             setCompraExitosa({
                 pedidoId: data.pedido_id,
-                total: data.total
+                total: data.total,
+                correo: data.correo || user.correo,
+                correoEnviado: data.correo_enviado
             });
 
         } catch (err) {
@@ -117,13 +119,35 @@ const Carrito = ({ user, baseUrl = '/' }) => {
     if (compraExitosa) {
         return (
             <div className="card text-center" style={{ padding: '40px 20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '3rem', color: 'var(--ok, #1f7a3d)' }}>🎉</div>
-                <h1 style={{ color: 'var(--ok, #1f7a3d)', marginTop: '10px' }}>¡Gracias por tu compra!</h1>
-                <p>Tu orden ha sido registrada con el número de pedido <strong>#{compraExitosa.pedidoId}</strong>.</p>
-                <p className="price" style={{ fontSize: '1.4rem' }}>Total pagado: Q {compraExitosa.total}</p>
-                <p className="muted">Nos pondremos en contacto contigo para coordinar el envío de tus zapatos.</p>
-                <div style={{ marginTop: '25px' }}>
-                    <a href={`${cleanBase}productos/index.php`} className="btn">Seguir explorando productos</a>
+                <div style={{ fontSize: '3.5rem', color: 'var(--ok, #1f7a3d)', marginBottom: '10px' }}>✓</div>
+                <h1 style={{ color: 'var(--ok, #1f7a3d)', marginTop: '0', fontSize: '1.9rem' }}>¡Gracias por tu compra!</h1>
+                <p style={{ fontSize: '1.1rem', margin: '10px 0' }}>
+                    Tu orden ha sido registrada con el número de pedido <strong>#{compraExitosa.pedidoId}</strong>.
+                </p>
+                <p className="price" style={{ fontSize: '1.45rem', margin: '14px 0' }}>Total pagado: Q {compraExitosa.total}</p>
+
+                {compraExitosa.correoEnviado ? (
+                    <div style={{ 
+                        background: '#e2f3e6', 
+                        color: 'var(--ok, #1f7a3d)', 
+                        border: '1px solid #b9dfc2', 
+                        borderRadius: '8px', 
+                        padding: '14px 18px', 
+                        maxWidth: '520px', 
+                        margin: '20px auto', 
+                        fontSize: '0.95rem' 
+                    }}>
+                        ✉ Hemos enviado un correo de confirmación con el detalle de tus productos a: <strong>{compraExitosa.correo}</strong>
+                    </div>
+                ) : (
+                    <p className="muted" style={{ maxWidth: '480px', margin: '15px auto' }}>
+                        Tu pedido fue guardado exitosamente. Nos pondremos en contacto contigo para coordinar la entrega.
+                    </p>
+                )}
+
+                <div style={{ marginTop: '25px', display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                    <a href={`${cleanBase}pedidos/index.php`} className="btn">Ver Mis Pedidos</a>
+                    <a href={`${cleanBase}productos/index.php`} className="btn btn-secondary">Seguir explorando productos</a>
                 </div>
             </div>
         );
@@ -184,8 +208,8 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                             <div className="qty-control">
                                                 <button onClick={() => cambiarCantidad(item.id_variante, -1)} className="btn-qty">-</button>
                                                 <span>{item.cantidad}</span>
-                                                <button
-                                                    onClick={() => cambiarCantidad(item.id_variante, 1)}
+                                                <button 
+                                                    onClick={() => cambiarCantidad(item.id_variante, 1)} 
                                                     className="btn-qty"
                                                     disabled={item.stockMax != null && item.cantidad >= item.stockMax}
                                                 >+</button>
@@ -200,7 +224,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                                 className="btn-remove"
                                                 title="Eliminar producto"
                                             >
-                                                🗑️
+                                                ✕
                                             </button>
                                         </td>
                                     </tr>
@@ -269,7 +293,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
                                     style={{ width: '100%', padding: '12px', fontSize: '1rem' }}
                                     disabled={cargando}
                                 >
-                                    {cargando ? 'Procesando...' : 'Confirmar y Pagar'}
+                                    {cargando ? 'Procesando pedido y enviando correo...' : 'Confirmar y Pagar'}
                                 </button>
                             )}
                         </div>
@@ -280,7 +304,7 @@ const Carrito = ({ user, baseUrl = '/' }) => {
     );
 };
 
-// DOM
+// Renderizado en el DOM
 const carritoRoot = document.getElementById('react-carrito');
 if (carritoRoot) {
     const rawUserData = carritoRoot.getAttribute('data-user');
