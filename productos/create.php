@@ -117,7 +117,7 @@ require __DIR__ . '/../includes/header.php';
 
         <div>
             <label>Tallas y stock (US)</label>
-            <p class="muted" style="margin:0 0 8px;">Deja en 0 las tallas que no vas a ofrecer. El código único de cada talla se genera automáticamente.</p>
+            <p class="muted" style="margin:0 0 8px;"></p>
             <div class="tallas-grid">
                 <?php foreach ($tallas as $t): ?>
                     <div class="talla-box">
