@@ -151,20 +151,7 @@ const Header = ({ user, baseUrl = '/' }) => {
                             </form>
                         )}
 
-                        {isAuth ? (
-                            <ul className="nav-list nav-list-buttons">
-                                <li className="nav-item">
-                                    <a 
-                                        href={`${cleanBase}index.php`} 
-                                        className="header-nav-btn btn-muted"
-                                        style={{ backgroundColor: 'var(--muted)', color: '#ffffff' }}
-                                        onClick={() => setIsMenuOpen(false)}
-                                    >
-                                        &larr; Regresar a la Página Principal
-                                    </a>
-                                </li>
-                            </ul>
-                        ) : esAdmin ? (
+                        {isAuth ? null : esAdmin ? (
                             <ul className="nav-list nav-list-buttons">
                                 <li className="nav-item">
                                     <a href={`${cleanBase}index.php`} className="header-nav-btn btn-muted" onClick={() => setIsMenuOpen(false)}>
@@ -318,7 +305,16 @@ const Header = ({ user, baseUrl = '/' }) => {
 
                         {/* BLOQUE DE USUARIO / ACCESO EN MÓVIL */}
                         <div className="mobile-auth-wrapper">
-                            {user ? (
+                            {isAuth ? (
+                                <a 
+                                    href={`${cleanBase}index.php`} 
+                                    className="header-nav-btn btn-muted"
+                                    style={{ width: '100%', textAlign: 'center', display: 'block' }}
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    &larr; Regresar a la Página Principal
+                                </a>
+                            ) : user ? (
                                 <div className="mobile-user-box">
                                     <div className="mobile-user-greeting">
                                         <span>Conectado como</span>
